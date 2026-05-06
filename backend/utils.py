@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from typing import Optional
 from fastapi import HTTPException
 import google.generativeai as genai
@@ -25,28 +26,49 @@ def write_json(filename: str, data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 def strip_fences(text: str) -> str:
-    text = text.strip()
-    if text.startswith("```"):
-        lines = text.split("\n")[1:]
-        while lines and lines[-1].strip().startswith("```"):
-            lines = lines[:-1]
-        text = "\n".join(lines).strip()
-    return text
+    match = re.search(r'(\{.*\}|\[.*\])', text, re.DOTALL)
+    if match:
+        return match.group(1)
+    return text.strip()
 
 def call_gemini(api_key: str, messages: list, system: str = None, max_tokens: int = 1024) -> str:
-    genai.configure(api_key=api_key)
-    gemini_msgs = [{"role": "model" if m["role"] == "assistant" else "user", "parts": [m["content"]]} for m in messages]
-    model = genai.GenerativeModel(model_name="gemini-1.5-flash", system_instruction=system)
-    
-    safety = {
-        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-    }
-    
-    response = model.generate_content(gemini_msgs, generation_config=genai.types.GenerationConfig(max_output_tokens=max_tokens, temperature=0.7), safety_settings=safety)
-    return response.text
+    try:
+        genai.configure(api_key=api_key)
+        
+        gemini_msgs = []
+        if messages and messages[0].get("role") == "assistant":
+            gemini_msgs.append({"role": "user", "parts": ["Let's begin."]})
+            
+        for m in messages:
+            role = "model" if m.get("role") == "assistant" else "user"
+            content = m.get("content", "")
+            if gemini_msgs and gemini_msgs[-1]["role"] == role:
+                gemini_msgs[-1]["parts"][0] += f"\n\n{content}"
+            else:
+                gemini_msgs.append({"role": role, "parts": [content]})
+        
+        model_kwargs = {"model_name": "gemini-3-flash-preview"}
+        if system:
+            model_kwargs["system_instruction"] = system
+            
+        model = genai.GenerativeModel(**model_kwargs)
+        
+        safety = {
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+        }
+        
+        response = model.generate_content(
+            gemini_msgs, 
+            generation_config=genai.types.GenerationConfig(max_output_tokens=max_tokens, temperature=0.7), 
+            safety_settings=safety
+        )
+        return response.text
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Gemini API Error: {str(e)}")
 
 def require_key(authorization: Optional[str]) -> str:
     if not authorization:

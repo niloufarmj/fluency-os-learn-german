@@ -1,1 +1,11 @@
-{}
+{
+  "vocab:hallo:A1": {
+    "sentences": [
+      "Hallo, wie geht es dir?",
+      "Hallo, ich bin Anna.",
+      "Hallo, mein Name ist Max."
+    ],
+    "translation": "Hello",
+    "part_of_speech": "Interjection"
+  }
+}
