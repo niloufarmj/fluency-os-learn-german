@@ -6,8 +6,7 @@
 <title>FluencyOS — German Language System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Added Inter font for cleaner, modern UI text -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,800;9..144,900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -15,8 +14,8 @@
 <!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <h1>FluencyOS</h1>
-    <span>🚀 AI German Tutor</span>
+    <span class="sidebar-logo-mark">F</span>
+    <h1>Fluency<em>OS</em></h1>
   </div>
   <nav id="nav">
     <div class="nav-item active" data-m="dashboard"><span class="nav-icon">📊</span> Dashboard</div>
@@ -28,8 +27,14 @@
     <div class="nav-item" data-m="settings"><span class="nav-icon">⚙️</span> Settings</div>
   </nav>
   <div class="sidebar-footer">
-    <div class="sidebar-footer-label">🏆 Current Level</div>
-    <div class="level-badge" id="sidebar-level">A2</div>
+    <div class="sidebar-user" id="sidebar-user">
+      <div class="sidebar-user-avatar" id="sidebar-user-avatar">?</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebar-user-name">Guest</div>
+        <div class="level-badge" id="sidebar-level">A2</div>
+      </div>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">🌙 &nbsp;Dark Mode</button>
   </div>
 </aside>
 

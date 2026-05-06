@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\nmoradi\\\\Documents\\\\learn-app\\\\fluency-os-learn-german\" -Recurse -File | ForEach-Object { $_.FullName })"
+    ]
+  }
+}

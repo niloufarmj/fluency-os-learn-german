@@ -68,17 +68,135 @@ function speakGerman(text) {
 window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 
 // ══════════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════════
+function initTheme() {
+  const saved = localStorage.getItem('fluency_theme') || 'light';
+  document.documentElement.dataset.theme = saved;
+  updateThemeBtn();
+}
+
+function toggleTheme() {
+  const cur = document.documentElement.dataset.theme || 'light';
+  setTheme(cur === 'dark' ? 'light' : 'dark');
+}
+
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  localStorage.setItem('fluency_theme', t);
+  updateThemeBtn();
+  const lightBtn = document.querySelector('[onclick="setTheme(\'light\')"]');
+  const darkBtn  = document.querySelector('[onclick="setTheme(\'dark\')"]');
+  if (lightBtn) lightBtn.classList.toggle('btn-primary', t === 'light');
+  if (darkBtn)  darkBtn.classList.toggle('btn-primary', t === 'dark');
+}
+
+function updateThemeBtn() {
+  const t = document.documentElement.dataset.theme || 'light';
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.innerHTML = t === 'dark' ? '☀️ &nbsp;Light Mode' : '🌙 &nbsp;Dark Mode';
+}
+
+// ══════════════════════════════════════════════
+// SIDEBAR PROFILE
+// ══════════════════════════════════════════════
+function updateSidebarProfile(profile) {
+  if (!profile) return;
+  const nameEl   = document.getElementById('sidebar-user-name');
+  const avatarEl = document.getElementById('sidebar-user-avatar');
+  const levelEl  = document.getElementById('sidebar-level');
+  if (nameEl)   nameEl.textContent   = profile.name || 'Learner';
+  if (avatarEl) avatarEl.textContent = (profile.name || 'G')[0].toUpperCase();
+  if (levelEl)  levelEl.textContent  = profile.level || 'A2';
+}
+
+// ══════════════════════════════════════════════
+// VOCABULARY HELPERS
+// ══════════════════════════════════════════════
+const DAILY_WORDS = [
+  { word: 'die Freiheit',    part_of_speech: 'noun',      translation: 'freedom' },
+  { word: 'gemütlich',       part_of_speech: 'adjective', translation: 'cozy, comfortable' },
+  { word: 'das Abenteuer',   part_of_speech: 'noun',      translation: 'adventure' },
+  { word: 'aufgeregt',       part_of_speech: 'adjective', translation: 'excited, agitated' },
+  { word: 'das Fernweh',     part_of_speech: 'noun',      translation: 'wanderlust' },
+  { word: 'die Weltanschauung', part_of_speech: 'noun',   translation: 'worldview, philosophy of life' },
+  { word: 'die Sehnsucht',   part_of_speech: 'noun',      translation: 'longing, yearning' },
+  { word: 'überrascht',      part_of_speech: 'adjective', translation: 'surprised' },
+  { word: 'der Zusammenhalt',part_of_speech: 'noun',      translation: 'cohesion, solidarity' },
+  { word: 'neugierig',       part_of_speech: 'adjective', translation: 'curious' },
+  { word: 'die Freude',      part_of_speech: 'noun',      translation: 'joy, delight' },
+  { word: 'selbstständig',   part_of_speech: 'adjective', translation: 'independent, self-employed' },
+  { word: 'das Heimweh',     part_of_speech: 'noun',      translation: 'homesickness' },
+  { word: 'leidenschaftlich',part_of_speech: 'adjective', translation: 'passionate' },
+];
+
+function renderVocabRows(words, t) {
+  if (!words.length) return '<p class="text-muted text-sm mt-8">No words match your search.</p>';
+  return words.map(w => {
+    const due = w.next_review && w.next_review <= t;
+    return `
+      <div class="vocab-row">
+        <button class="btn btn-ghost" style="padding:4px 6px;font-size:14px;" onclick="speakGerman('${esc(w.word)}')">🔊</button>
+        <span class="vocab-word">${esc(w.word)}</span>
+        <span class="vocab-trans">${esc(w.translation || '')}</span>
+        ${w.level ? `<span class="vocab-level-tag">${esc(w.level)}</span>` : ''}
+        <span class="${due ? 'vocab-due' : 'text-muted'} text-xs">${due ? '⚡ Due now' : 'Next: ' + fmtDate(w.next_review)}</span>
+        <span class="vocab-ef">EF ${(+(w.ease_factor || 2.5)).toFixed(1)}</span>
+      </div>`;
+  }).join('');
+}
+
+function filterVocab(query) {
+  const t = today();
+  const q = query.toLowerCase().trim();
+  const filtered = q
+    ? S.vocab.filter(w =>
+        (w.word || '').toLowerCase().includes(q) ||
+        (w.translation || '').toLowerCase().includes(q))
+    : S.vocab;
+  const list = document.getElementById('vocab-list');
+  if (list) list.innerHTML = renderVocabRows(filtered, t);
+}
+
+// ══════════════════════════════════════════════
 // MODULE: DASHBOARD
 // ══════════════════════════════════════════════
 async function renderDashboard(c) {
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'Guten Morgen' : h < 18 ? 'Guten Tag' : 'Guten Abend';
+
   c.innerHTML = `
-    <h2 class="module-title">Dashboard</h2>
+    <h2 class="module-title">${greet}! 👋</h2>
     <p class="module-sub">Your daily German learning overview</p>
+
     <div class="stats-row">
       <div class="stat-card"><div class="stat-label">Current Level</div><div class="stat-value" id="st-lvl">—</div></div>
       <div class="stat-card"><div class="stat-label">Day Streak</div><div class="stat-value" id="st-streak">—</div></div>
       <div class="stat-card"><div class="stat-label">Words Mastered</div><div class="stat-value" id="st-words">—</div></div>
     </div>
+
+    <div class="card daily-goal-card">
+      <div class="flex between items-center mb-10">
+        <div class="section-label" style="margin-bottom:0">Daily Goal</div>
+        <div class="text-xs text-muted" id="goal-label">0 / 30 min</div>
+      </div>
+      <div class="progress-bar" style="margin-bottom:0">
+        <div class="progress-fill" id="goal-bar" style="width:0%;background:var(--accent)"></div>
+      </div>
+    </div>
+
+    <div class="wotd-card" id="wotd-card">
+      <div>
+        <div class="section-label">Word of the Day</div>
+        <div class="wotd-word" id="wotd-word">—</div>
+        <div class="wotd-details">
+          <span class="wotd-pos" id="wotd-pos"></span>
+          <span class="wotd-trans" id="wotd-trans"></span>
+        </div>
+      </div>
+      <button class="btn btn-ghost" id="wotd-speak" style="font-size:22px;padding:8px 12px;">🔊</button>
+    </div>
+
     <div class="card">
       <div class="section-label">Today's Plan</div>
       <div id="plan-area">${spin('Generating plan…')}</div>
@@ -96,10 +214,26 @@ async function renderDashboard(c) {
       api('GET','/vocab'),
     ]);
     S.profile = profile; S.vocab = vocab;
-    $('sidebar-level').textContent = profile.level;
+    updateSidebarProfile(profile);
     $('st-lvl').textContent    = profile.level;
     $('st-streak').textContent = profile.streak || 0;
-    $('st-words').textContent  = vocab.filter(w => (w.interval_days||0) >= 21).length;
+    $('st-words').textContent  = vocab.filter(w => (w.interval_days || 0) >= 21).length;
+
+    // Daily goal progress
+    const goal    = profile.daily_time_minutes || 30;
+    const studied = Math.floor(activeSeconds / 60);
+    const pct     = Math.min(100, Math.round((studied / goal) * 100));
+    $('goal-label').textContent = `${studied} / ${goal} min`;
+    $('goal-bar').style.width   = pct + '%';
+
+    // Word of the Day — use vocab deck if available, else curated list
+    const source = vocab.length > 0 ? vocab : DAILY_WORDS;
+    const wotd   = source[new Date().getDate() % source.length];
+    $('wotd-word').textContent  = wotd.word;
+    $('wotd-pos').textContent   = wotd.part_of_speech || '';
+    $('wotd-trans').textContent = wotd.translation || '';
+    const speakBtn = $('wotd-speak');
+    if (speakBtn) speakBtn.onclick = () => speakGerman(wotd.word);
 
     buildPlan($('plan-area'), plan.tasks);
     buildCalendar($('cal-area'));
@@ -319,20 +453,25 @@ async function doAddWord() {
 
 function vAll(el) {
   if (!S.vocab.length) {
-    el.innerHTML = `<p class="text-muted text-sm">No words yet. Use "Add Word" to build your deck.</p>`;
+    el.innerHTML = `
+      <div class="card text-center" style="padding:44px;">
+        <div class="serif" style="font-size:1.3rem;margin-bottom:8px;">No words yet</div>
+        <p class="text-muted text-sm">Use the "Add Word" tab to start building your deck.</p>
+      </div>`;
     return;
   }
   const t = today();
-  el.innerHTML = `<div class="vocab-list">` + S.vocab.map(w => {
-    const due = w.next_review && w.next_review <= t;
-    return `
-      <div class="vocab-row">
-        <span class="vocab-word">${esc(w.word)}</span>
-        <span class="vocab-trans">${esc(w.translation||'')}</span>
-        <span class="${due?'vocab-due text-amber':'text-muted'} text-xs">${due ? 'Due now' : 'Next: '+fmtDate(w.next_review)}</span>
-        <span class="vocab-ef">EF ${w.ease_factor||2.5}</span>
-      </div>`;
-  }).join('') + `</div>`;
+  const dueCount = S.vocab.filter(w => w.next_review && w.next_review <= t).length;
+  el.innerHTML = `
+    <div class="vocab-search-row mb-16">
+      <input type="text" id="vocab-search" placeholder="🔍  Search German or English…" oninput="filterVocab(this.value)">
+    </div>
+    <div class="flex between items-center mb-10">
+      <span class="text-xs text-muted">${S.vocab.length} word${S.vocab.length !== 1 ? 's' : ''} in deck</span>
+      <span class="text-xs ${dueCount ? 'text-amber' : 'text-muted'}">${dueCount} due today</span>
+    </div>
+    <div class="vocab-list" id="vocab-list">${renderVocabRows(S.vocab, t)}</div>
+  `;
 }
 
 // ══════════════════════════════════════════════
@@ -595,12 +734,12 @@ $('tt-add-btn').addEventListener('click', async () => {
 // MODULE: ROLEPLAY
 // ══════════════════════════════════════════════
 const SCENARIOS = [
-  { level:'A1', title:'Buying Bread',         desc:'At a German bakery, ordering Brötchen and Brot.',          sys:'You are a friendly German bakery employee. The customer wants to buy bread and rolls.' },
-  { level:'A1', title:'Ordering Coffee',      desc:'At a café, ordering coffee and a snack.',                  sys:'You are a German café waiter. The customer is ordering coffee and food.' },
-  { level:'A2', title:'Buying Train Tickets', desc:'At Munich Hauptbahnhof, purchasing a ticket.',             sys:'You are a German train station employee at Munich Hauptbahnhof. The user wants to buy a train ticket.' },
-  { level:'A2', title:'At the Doctor',        desc:'Explaining symptoms to a German doctor.',                  sys:'You are a German general practitioner (Arzt). The patient is describing their symptoms.' },
-  { level:'B1', title:'Arguing with Landlord',desc:'Discussing a repair issue with your Vermieter.',          sys:'You are a German landlord (Vermieter). The tenant has a complaint about something broken in the apartment.' },
-  { level:'B1', title:'Job Interview',        desc:'Interviewing for a position at a German company.',        sys:'You are a German HR manager conducting a job interview at a mid-sized German company.' },
+  { level:'A1', icon:'🥖', title:'Buying Bread',         desc:'At a German bakery, ordering Brötchen and Brot.',          sys:'You are a friendly German bakery employee. The customer wants to buy bread and rolls.' },
+  { level:'A1', icon:'☕', title:'Ordering Coffee',      desc:'At a café, ordering coffee and a snack.',                  sys:'You are a German café waiter. The customer is ordering coffee and food.' },
+  { level:'A2', icon:'🚂', title:'Buying Train Tickets', desc:'At Munich Hauptbahnhof, purchasing a ticket.',             sys:'You are a German train station employee at Munich Hauptbahnhof. The user wants to buy a train ticket.' },
+  { level:'A2', icon:'🏥', title:'At the Doctor',        desc:'Explaining symptoms to a German doctor.',                  sys:'You are a German general practitioner (Arzt). The patient is describing their symptoms.' },
+  { level:'B1', icon:'🏠', title:'Arguing with Landlord',desc:'Discussing a repair issue with your Vermieter.',          sys:'You are a German landlord (Vermieter). The tenant has a complaint about something broken in the apartment.' },
+  { level:'B1', icon:'💼', title:'Job Interview',        desc:'Interviewing for a position at a German company.',        sys:'You are a German HR manager conducting a job interview at a mid-sized German company.' },
 ];
 
 const OPENINGS = {
@@ -623,8 +762,9 @@ function renderRoleplay(c) {
         ${SCENARIOS.map((s,i) => `
           <div class="scenario-card" data-i="${i}">
             <div class="sc-level">${s.level}</div>
-            <div class="sc-title">${esc(s.title)}</div>
+            <div class="sc-title">${s.icon || '💬'} ${esc(s.title)}</div>
             <div class="sc-desc">${esc(s.desc)}</div>
+            <div class="scenario-play">▶ Start Conversation</div>
           </div>`).join('')}
       </div>
     </div>`;
@@ -753,8 +893,18 @@ async function renderSettings(c) {
     S.profile = profile;
   } catch(e) { /* show form anyway */ }
 
+  const isDark = document.documentElement.dataset.theme === 'dark';
+
   $('set-body').innerHTML = `
     <div class="card">
+      <div class="setting-group">
+        <label class="setting-label">Appearance</label>
+        <div class="appearance-btns">
+          <button class="btn ${!isDark ? 'btn-primary' : ''}" onclick="setTheme('light')">☀️ &nbsp;Light Mode</button>
+          <button class="btn ${isDark  ? 'btn-primary' : ''}" onclick="setTheme('dark')">🌙 &nbsp;Dark Mode</button>
+        </div>
+      </div>
+      <hr class="divider">
       <div class="setting-group">
         <label class="setting-label">Google Gemini API Key</label>
         <div class="flex gap-8">
@@ -848,14 +998,13 @@ const MODULES = {
 };
 
 async function bootApp() {
+  initTheme();
   try {
     S.profile = await api('GET', '/profile');
-    
-    // If no profile exists, or onboarding isn't finished
     if (!S.profile || !S.profile.onboarded) {
       renderOnboarding();
     } else {
-      document.getElementById('sidebar-level').textContent = S.profile.level;
+      updateSidebarProfile(S.profile);
       go('dashboard');
     }
   } catch(e) {

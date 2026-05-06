@@ -342,7 +342,7 @@ async function gradeAndFinalizeAppSequence() {
     document.querySelector('.sidebar').style.display = 'flex';
     const container = document.getElementById('main');
     container.style.marginLeft = 'var(--sidebar-w)';
-    document.getElementById('sidebar-level').textContent = finalProfile.level;
+    updateSidebarProfile(finalProfile);
     
     // go('dashboard'); 
     showFinalResultScreen(); // Show deduced level before going to dashboard
