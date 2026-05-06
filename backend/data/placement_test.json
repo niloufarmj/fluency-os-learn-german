@@ -1,0 +1,26 @@
+[
+  { "id": 1, "level": "A1", "type": "multiple_choice", "category": "Grammar", "q": "Hallo! ___ bist du?", "options": ["Wo", "Wer", "Was", "Wie"], "correct": 1 },
+  { "id": 2, "level": "A1", "type": "multiple_choice", "category": "Vocabulary", "q": "Der Bruder von meiner Mutter ist mein ___.", "options": ["Opa", "Cousin", "Onkel", "Vater"], "correct": 2 },
+  { "id": 3, "level": "A1", "type": "writing_blank", "category": "Writing", "q": "Fill in the blank: 'Ich komme ___ Deutschland.'", "answer": "aus" },
+  { "id": 4, "level": "A1", "type": "listening", "category": "Listening", "transcript": "Guten Tag, ich hätte gern einen Kaffee mit Milch, bitte.", "q": "What is the person ordering?", "options": ["Black tea", "Coffee with milk", "Just milk", "Apple juice"], "correct": 1 },
+  
+  { "id": 5, "level": "A2", "type": "multiple_choice", "category": "Grammar", "q": "Ich bleibe heute zu Hause, ___ ich krank bin.", "options": ["denn", "weil", "aber", "obwohl"], "correct": 1 },
+  { "id": 6, "level": "A2", "type": "speaking_blank", "category": "Speaking", "q": "Say this sentence, filling in the correct verb: 'Gestern ___ ich im Kino.'", "answer_pattern": "war" },
+  { "id": 7, "level": "A2", "type": "reading", "category": "Reading", "passage": "Thomas ist 25 Jahre alt und wohnt in München. Er arbeitet als Ingenieur und liebt Fußball.", "q": "Was ist Thomas von Beruf?", "options": ["Lehrer", "Fußballspieler", "Ingenieur", "Student"], "correct": 2 },
+  { "id": 8, "level": "A2", "type": "writing_full", "category": "Writing", "q": "Write 2 sentences in German about what you did yesterday (Min 10 words total)." },
+  
+  { "id": 9, "level": "B1", "type": "multiple_choice", "category": "Vocabulary", "q": "Best synonym for 'die Entscheidung'?", "options": ["Die Frage", "Der Entschluss", "Das Ergebnis", "Die Wahl"], "correct": 1 },
+  { "id": 10, "level": "B1", "type": "listening", "category": "Listening", "transcript": "Achtung am Gleis 4: Der ICE 592 nach München verspätet sich um ca. 20 Minuten wegen einer Signalstörung.", "q": "Why is the train delayed?", "options": ["Track defect", "Waiting for passengers", "Bad weather", "A signal malfunction"], "correct": 3 },
+  { "id": 11, "level": "B1", "type": "writing_blank", "category": "Writing", "q": "Fill in the blank: 'Wenn ich Zeit ___ (to have, hypothetical), würde ich kommen.'", "answer": "hätte" },
+  { "id": 12, "level": "B1", "type": "speaking_full", "category": "Speaking", "q": "Describe your hometown and what you like about it (Min 30 seconds)." },
+
+  { "id": 13, "level": "B2", "type": "multiple_choice", "category": "Grammar", "q": "Er hat die Prüfung bestanden, ___ er kaum gelernt hat.", "options": ["deshalb", "trotzdem", "obwohl", "weil"], "correct": 2 },
+  { "id": 14, "level": "B2", "type": "reading", "category": "Reading", "passage": "Die Globalisierung bietet viele wirtschaftliche Vorteile, birgt aber auch ökologische Risiken durch erhöhten Transport.", "q": "Welchen Aspekt der Globalisierung sieht der Text kritisch?", "options": ["Die Wirtschaft", "Die Umwelt", "Den Transport", "Den Tourismus"], "correct": 1 },
+  { "id": 15, "level": "B2", "type": "listening", "category": "Listening", "transcript": "Sehr geehrte Damen und Herren, wir bedauern, Ihnen mitteilen zu müssen, dass der heutige Flug annulliert wurde.", "q": "What is the key information?", "options": ["The gate has changed", "The flight is canceled", "The flight is delayed", "The flight is overbooked"], "correct": 1 },
+  { "id": 16, "level": "B2", "type": "writing_full", "category": "Writing", "q": "Summarize your opinion on social media's impact on society (Min 50 words)." },
+
+  { "id": 17, "level": "C1", "type": "multiple_choice", "category": "Grammar", "q": "Da muss ich Ihnen leider ___ (to contradict, formal).", "options": ["widersprechen", "wiederlegen", "widersagen", "widerrufen"], "correct": 0 },
+  { "id": 18, "level": "C1", "type": "writing_blank", "category": "Writing", "q": "Fill in the correct prefix: 'Wir müssen die Entscheidung ___schieben (to postpone).'", "answer": "auf" },
+  { "id": 19, "level": "C1", "type": "speaking_full", "category": "Speaking", "q": "Discuss a recent political or social development in your country and analyze its causes and effects (Min 60 seconds)." },
+  { "id": 20, "level": "C1", "type": "multiple_choice", "category": "Vocabulary", "q": "Best synonym for 'anspruchsvoll'?", "options": ["schwierig", "fordernd", "leicht", "komplex"], "correct": 1 }
+]

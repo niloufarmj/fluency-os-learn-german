@@ -80,6 +80,7 @@ def get_daily_plan():
     profile = read_json("user_profile.json")
     level = profile.get("level", "A2")
     total_min = profile.get("daily_time_minutes", 30)
+    current_step = profile.get("current_step", 1) # Progression Lock
 
     vocab_min = max(5, int(total_min * 0.20))
     grammar_min = max(10, int(total_min * 0.35))
@@ -87,16 +88,24 @@ def get_daily_plan():
 
     syllabus = read_json("syllabus.json")
     level_topics = [t for t in syllabus if t.get("level") == level]
-    grammar_topic = level_topics[0]["topic"] if level_topics else "Verb Conjugation (Present Tense)"
+    
+    # Ensure they don't jump ahead. If they are on step 1, they get topic index 0.
+    topic_index = min(current_step - 1, len(level_topics) - 1)
+    
+    if level_topics:
+        active_topic = level_topics[topic_index]["topic"]
+    else:
+        active_topic = "General Review"
 
     return {
         "tasks": [
             {"type": "vocab_review", "duration_min": vocab_min, "count": 20},
-            {"type": "grammar", "duration_min": grammar_min, "topic": grammar_topic},
+            {"type": "grammar", "duration_min": grammar_min, "topic": active_topic, "step": current_step},
             {"type": "reading", "duration_min": reading_min, "level": level},
+            # Require an end-of-day test to unlock the next step
+            {"type": "end_of_day_test", "duration_min": 5, "topic": active_topic} 
         ]
     }
-
 
 @app.post("/generate-vocab-context")
 def generate_vocab_context(req: VocabContextRequest, authorization: Optional[str] = Header(None)):

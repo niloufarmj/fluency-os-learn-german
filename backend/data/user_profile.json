@@ -3,5 +3,10 @@
   "level": "A2",
   "daily_time_minutes": 30,
   "streak": 0,
-  "start_date": "2026-05-06"
+  "start_date": "2026-05-06",
+  "priorities": [
+    "speaking"
+  ],
+  "onboarded": true,
+  "current_step": 1
 }

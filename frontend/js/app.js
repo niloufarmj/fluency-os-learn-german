@@ -1,48 +1,6 @@
 'use strict';
 
-// ══════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════
-const S = {
-  module:   'dashboard',
-  apiKey:   localStorage.getItem('fluency_api_key') || '',
-  profile:  null,
-  vocab:    [],
-  syllabus: [],
-  // review
-  queue: [], qIdx: 0, qReviewed: 0,
-  // chat
-  history: [], scenario: null,
-  // reading
-  article: null,
-  // grammar
-  grammarData: null,
-};
 
-const BASE = 'http://localhost:8000';
-
-// ══════════════════════════════════════════════
-// API
-// ══════════════════════════════════════════════
-async function api(method, path, body) {
-  const headers = { 'Content-Type': 'application/json' };
-  if (S.apiKey) headers['Authorization'] = 'Bearer ' + S.apiKey;
-  const opts = { method, headers };
-  if (body !== undefined) opts.body = JSON.stringify(body);
-  try {
-    const r = await fetch(BASE + path, opts);
-    if (!r.ok) {
-      const e = await r.json().catch(() => ({ detail: r.statusText }));
-      throw new Error(e.detail || 'Request failed');
-    }
-    return r.json();
-  } catch (e) {
-    if (e instanceof TypeError && e.message.includes('fetch')) {
-      throw new Error('Cannot reach backend. Run: uvicorn main:app --reload');
-    }
-    throw e;
-  }
-}
 
 // ══════════════════════════════════════════════
 // ROUTING
@@ -889,4 +847,21 @@ const MODULES = {
   settings:   renderSettings,
 };
 
-go('dashboard');
+async function bootApp() {
+  try {
+    S.profile = await api('GET', '/profile');
+    
+    // If no profile exists, or onboarding isn't finished
+    if (!S.profile || !S.profile.onboarded) {
+      renderOnboarding();
+    } else {
+      document.getElementById('sidebar-level').textContent = S.profile.level;
+      go('dashboard');
+    }
+  } catch(e) {
+    renderOnboarding();
+  }
+}
+
+// Boot the app instead of forcing the dashboard
+bootApp();
