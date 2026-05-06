@@ -1,0 +1,77 @@
+[
+  {
+    "level": "A1",
+    "topic": "Verb Conjugation (Present Tense)",
+    "description": "ich bin, du bist, er/sie/es ist — regular and irregular verbs"
+  },
+  {
+    "level": "A1",
+    "topic": "Nouns and Articles",
+    "description": "der, die, das — grammatical gender and the definite article"
+  },
+  {
+    "level": "A1",
+    "topic": "Basic Word Order (SVO)",
+    "description": "Subject-Verb-Object structure and verb-second rule"
+  },
+  {
+    "level": "A1",
+    "topic": "Negation with nicht and kein",
+    "description": "How to negate sentences and noun phrases in German"
+  },
+  {
+    "level": "A1",
+    "topic": "Modal Verbs: können and müssen",
+    "description": "Expressing ability and obligation — ich kann, ich muss"
+  },
+  {
+    "level": "A2",
+    "topic": "Weil vs. Denn",
+    "description": "Causal conjunctions and their effect on word order"
+  },
+  {
+    "level": "A2",
+    "topic": "Accusative vs. Dative Case",
+    "description": "Direct vs. indirect objects and case-specific prepositions"
+  },
+  {
+    "level": "A2",
+    "topic": "Separable Verbs",
+    "description": "aufmachen, einladen, anrufen — prefix separation in main clauses"
+  },
+  {
+    "level": "A2",
+    "topic": "Perfect Tense (Perfekt)",
+    "description": "haben vs. sein auxiliary — Ich habe gegessen / Ich bin gegangen"
+  },
+  {
+    "level": "A2",
+    "topic": "Comparatives and Superlatives",
+    "description": "groß → größer → am größten — forming comparisons"
+  },
+  {
+    "level": "B1",
+    "topic": "Konjunktiv II (Subjunctive)",
+    "description": "Polite requests, hypotheticals — ich würde, ich könnte, ich hätte"
+  },
+  {
+    "level": "B1",
+    "topic": "Passive Voice",
+    "description": "werden + Partizip II — Das Buch wird gelesen"
+  },
+  {
+    "level": "B1",
+    "topic": "Relative Clauses",
+    "description": "Der Mann, der... — relative pronouns and subordinate clause word order"
+  },
+  {
+    "level": "B1",
+    "topic": "Two-Way Prepositions",
+    "description": "an, auf, in, über, unter — Accusative (movement) vs. Dative (location)"
+  },
+  {
+    "level": "B1",
+    "topic": "Future Tense with werden",
+    "description": "Ich werde... + infinitive — expressing plans and predictions"
+  }
+]
