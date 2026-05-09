@@ -63,6 +63,7 @@ class ExplainGrammarRequest(BaseModel):
 class TranslateWordRequest(BaseModel):
     word: str
     level: Optional[str] = "A2"
+    sentence: Optional[str] = None
 
 class ProfileUpdateRequest(BaseModel):
     name: Optional[str] = None
@@ -354,16 +355,32 @@ def explain_grammar(req: ExplainGrammarRequest, authorization: Optional[str] = H
 @app.post("/translate-word")
 def translate_word(req: TranslateWordRequest, authorization: Optional[str] = Header(None)):
     cache = read_json("cache.json")
-    cache_key = f"translate:{req.word.lower()}"
+    # Include sentence in cache key only when provided, to get context-aware separable verb lookup
+    sentence_key = req.sentence[:80].lower() if req.sentence else ""
+    cache_key = f"translate:{req.word.lower()}:{sentence_key}" if sentence_key else f"translate:{req.word.lower()}"
     if cache_key in cache:
         return cache[cache_key]
 
     api_key = require_key(authorization)
-    prompt = (
-        f"Translate the German word '{req.word}' to English. "
-        "Return ONLY minified JSON, no markdown, no backticks: "
-        '{"word":"...","translation":"...","part_of_speech":"..."}'
-    )
+
+    if req.sentence:
+        prompt = (
+            f"The user clicked the German word '{req.word}' in this sentence: \"{req.sentence}\"\n"
+            f"Determine whether '{req.word}' is a separable verb prefix (Verbzusatz) belonging to a separable verb in this sentence. "
+            "German separable verb prefixes (e.g. 'an', 'auf', 'ab', 'aus', 'ein', 'mit', 'nach', 'vor', 'weg', 'zu', 'zurück', 'her', 'hin') "
+            "appear detached at the END of the clause in present/simple past tense (e.g. 'Er kommt um 8 an' → prefix 'an' belongs to 'ankommen').\n"
+            f"- If YES: identify the complete separable infinitive (e.g. 'ankommen') and translate that verb.\n"
+            f"- If NO: translate '{req.word}' directly.\n"
+            "Return ONLY minified JSON, no markdown, no backticks: "
+            '{"word":"<full separable infinitive if applicable, else the original word>","translation":"<English>","part_of_speech":"<verb/noun/adjective/adverb/preposition/etc>"}'
+        )
+    else:
+        prompt = (
+            f"Translate the German word '{req.word}' to English. "
+            "Return ONLY minified JSON, no markdown, no backticks: "
+            '{"word":"...","translation":"...","part_of_speech":"..."}'
+        )
+
     raw = call_gemini(api_key, [{"role": "user", "content": prompt}])
     result, err = parse_json_strict(raw)
     if err or not isinstance(result, dict):

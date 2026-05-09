@@ -16,5 +16,89 @@
     ],
     "translation": "to send",
     "part_of_speech": "verb"
+  },
+  "vocab:die besprechung:A2": {
+    "sentences": [
+      "Die Besprechung beginnt um neun Uhr.",
+      "Ich habe heute eine wichtige Besprechung mit meinem Chef.",
+      "Wie lange dauert die Besprechung heute?"
+    ],
+    "translation": "meeting",
+    "part_of_speech": "noun, feminine"
+  },
+  "vocab:erledigen:A2": {
+    "sentences": [
+      "Ich muss heute meine Hausaufgaben erledigen.",
+      "Kannst du bitte den Einkauf erledigen?",
+      "Wir haben die Arbeit schnell erledigt."
+    ],
+    "translation": "to take care of / to finish",
+    "part_of_speech": "Verb"
+  },
+  "vocab:das telefonat:A2": {
+    "sentences": [
+      "Das Telefonat mit meiner Mutter war sehr schön.",
+      "Ich muss ein kurzes Telefonat machen.",
+      "Das Telefonat gestern war wichtig für meine Arbeit."
+    ],
+    "translation": "the phone call",
+    "part_of_speech": "Substantiv, neutrum"
+  },
+  "translate:an": {
+    "word": "an",
+    "translation": "at, on, to",
+    "part_of_speech": "preposition"
+  },
+  "translate:begrüßt": {
+    "word": "begrüßt",
+    "translation": "welcomed",
+    "part_of_speech": "verb"
+  },
+  "vocab:begrüßt:A1": {
+    "sentences": [
+      "Er begrüßt den Lehrer.",
+      "Sie begrüßt ihre Freundin.",
+      "Der Mann begrüßt die Gäste."
+    ],
+    "translation": "He greets the teacher; She greets her friend; The man greets the guests.",
+    "part_of_speech": "Verb"
+  },
+  "translate:kommt:max kommt um 8:30 uhr in seinem büro in berlin an. sein büro ist hell und modern": {
+    "word": "ankommen",
+    "translation": "to arrive",
+    "part_of_speech": "verb"
+  },
+  "vocab:ankommen:A1": {
+    "sentences": [
+      "Wann kommst du an?",
+      "Der Zug kommt um 10 Uhr an.",
+      "Ich komme heute in Berlin an."
+    ],
+    "translation": "to arrive",
+    "part_of_speech": "verb"
+  },
+  "translate:einige:max kommt um 8:30 uhr in seinem büro in berlin an. sein büro ist hell und modern": {
+    "word": "einige",
+    "translation": "some",
+    "part_of_speech": "adjective"
+  },
+  "translate:prüfen:max kommt um 8:30 uhr in seinem büro in berlin an. sein büro ist hell und modern": {
+    "word": "prüfen",
+    "translation": "to check",
+    "part_of_speech": "verb"
+  },
+  "vocab:prüfen:A1": {
+    "sentences": [
+      "Ich prüfe den Termin.",
+      "Bitte prüfen Sie den Namen.",
+      "Wir prüfen das Auto."
+    ],
+    "translation": "to check / to examine",
+    "part_of_speech": "verb"
+  },
+  "translate:erklärt:max kommt um 8:30 uhr in seinem büro in berlin an. sein büro ist hell und modern": {
+    "word": "erklärt",
+    "translation": "explains",
+    "part_of_speech": "verb"
   }
 }

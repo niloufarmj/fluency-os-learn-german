@@ -6,6 +6,7 @@ import { VocabularyPage } from './pages/VocabularyPage';
 import { GrammarPage } from './pages/GrammarPage';
 import { ReadingPage } from './pages/ReadingPage';
 import { RoleplayPage } from './pages/RoleplayPage';
+import { ResourcesPage } from './pages/ResourcesPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { PlanPage } from './pages/PlanPage';
 import { AppProvider, useApp } from './state/AppState';
@@ -35,6 +36,7 @@ function AppRoutes() {
         <Route path="/grammar" element={<GrammarPage />} />
         <Route path="/reading" element={<ReadingPage />} />
         <Route path="/roleplay" element={<RoleplayPage />} />
+        <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
       <Route path="/onboarding" element={<OnboardingPage />} />

@@ -1,26 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { apiGet, apiPost } from '../utils/api';
 import type { DailyProgress, EndOfDayTest, PlanTodayResponse } from '../utils/types';
-import { Link } from 'react-router-dom';
-
-function speakGerman(text: string) {
-  if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.lang = 'de-DE';
-  msg.rate = 0.9;
-  window.speechSynthesis.speak(msg);
-}
+import { useNavigate } from 'react-router-dom';
 
 export function PlanPage() {
+  const nav = useNavigate();
   const [data, setData] = useState<PlanTodayResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
   const [test, setTest] = useState<EndOfDayTest | null>(null);
   const [testErr, setTestErr] = useState<string | null>(null);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
-  const [submitRes, setSubmitRes] = useState<any>(null);
+  const [answers, setAnswers] = useState<Record<string, unknown>>({});
+  const [submitRes, setSubmitRes] = useState<{ result: { score: number; pass: boolean; feedback?: string } } | null>(null);
 
   async function load() {
     setLoading(true);
@@ -35,10 +26,7 @@ export function PlanPage() {
     }
   }
 
-  useEffect(() => {
-    void load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => { void load(); }, []);
 
   const allTasksDone = useMemo(() => {
     const p = data?.progress;
@@ -46,10 +34,14 @@ export function PlanPage() {
     return !!(p.tasks.vocab && p.tasks.grammar && p.tasks.reading && p.tasks.roleplay);
   }, [data?.progress]);
 
-  async function mark(task: 'vocab' | 'grammar' | 'reading' | 'roleplay', completed: boolean) {
+  async function mark(task: keyof DailyProgress['tasks'], completed: boolean) {
     if (!data) return;
-    const updated = await apiPost<DailyProgress>('/plan/progress', { date: data.effective_date, task, completed });
-    setData({ ...data, progress: updated });
+    try {
+      const updated = await apiPost<DailyProgress>('/plan/progress', { date: data.effective_date, task, completed });
+      setData({ ...data, progress: updated });
+    } catch {
+      // ignore
+    }
   }
 
   async function generateTest() {
@@ -68,7 +60,10 @@ export function PlanPage() {
     if (!data) return;
     setTestErr(null);
     try {
-      const res = await apiPost<{ progress: DailyProgress; result: any }>('/plan/test/submit', { date: data.effective_date, answers });
+      const res = await apiPost<{ progress: DailyProgress; result: { score: number; pass: boolean; feedback?: string } }>(
+        '/plan/test/submit',
+        { date: data.effective_date, answers },
+      );
       setSubmitRes(res);
       setData({ ...data, progress: res.progress });
     } catch (e) {
@@ -83,27 +78,85 @@ export function PlanPage() {
       </div>
     );
   }
-
   if (error) return <div className="msg-box msg-error">{error}</div>;
   if (!data) return null;
 
   const { plan, progress, backlog, effective_date } = data;
+  const completedCount = [progress.tasks.vocab, progress.tasks.grammar, progress.tasks.reading, progress.tasks.roleplay].filter(Boolean).length;
+
+  type TaskKey = keyof typeof progress.tasks;
+
+  const sections: {
+    id: TaskKey | 'resources';
+    icon: string;
+    title: string;
+    subtitle: string;
+    detail: string;
+    done: boolean;
+    route: string;
+  }[] = [
+    {
+      id: 'vocab',
+      icon: '🗂️',
+      title: 'Vocabulary',
+      subtitle: `${plan.vocab.length} words · ${plan.level}`,
+      detail: plan.vocab.slice(0, 4).map((v) => v.word).join(' · '),
+      done: progress.tasks.vocab,
+      route: '/vocabulary',
+    },
+    {
+      id: 'grammar',
+      icon: '📐',
+      title: 'Grammar',
+      subtitle: plan.grammar.topic,
+      detail: plan.grammar.explanation.slice(0, 90) + '…',
+      done: progress.tasks.grammar,
+      route: '/grammar',
+    },
+    {
+      id: 'reading',
+      icon: '📖',
+      title: 'Reading',
+      subtitle: plan.reading.title,
+      detail: `Theme: ${plan.reading.theme}`,
+      done: progress.tasks.reading,
+      route: '/reading',
+    },
+    {
+      id: 'roleplay',
+      icon: '🎭',
+      title: 'Roleplay',
+      subtitle: plan.roleplay.scenario_title,
+      detail: plan.roleplay.target_phrases.slice(0, 2).join(' · '),
+      done: progress.tasks.roleplay,
+      route: '/roleplay',
+    },
+    {
+      id: 'resources',
+      icon: '📺',
+      title: 'Resources',
+      subtitle: `${plan.youtube.length} curated videos`,
+      detail: plan.youtube[0]?.title || 'YouTube study materials',
+      done: false,
+      route: '/resources',
+    },
+  ];
 
   return (
     <div>
-      <div className="flex between items-center mb-16" style={{ marginBottom: 16 }}>
+      <div className="flex between items-center" style={{ marginBottom: 8 }}>
         <div>
           <h2 className="module-title" style={{ marginBottom: 6 }}>
-            Daily Plan
+            Today&apos;s Plan
           </h2>
           <div className="text-sm text-muted">
             {backlog ? (
               <>
-                You have unfinished work. Showing <strong>{effective_date}</strong> first.
+                Backlog from <strong>{effective_date}</strong>
               </>
             ) : (
               <>
-                Today: <strong>{effective_date}</strong>
+                <strong>{effective_date}</strong> · {plan.focus}
               </>
             )}
           </div>
@@ -113,161 +166,77 @@ export function PlanPage() {
         </button>
       </div>
 
-      <div className="card">
-        <div className="section-label">Focus</div>
-        <div className="text-sm">{plan.focus}</div>
+      <div style={{ marginBottom: 28 }}>
+        <div className="flex between items-center" style={{ marginBottom: 8 }}>
+          <span className="text-xs text-muted">
+            {completedCount} of 4 sections completed
+          </span>
+          <span className="text-xs text-muted">{Math.round((completedCount / 4) * 100)}%</span>
+        </div>
+        <div className="progress-bar">
+          <div className="progress-fill" style={{ width: `${(completedCount / 4) * 100}%` }} />
+        </div>
       </div>
 
-      <div className="card">
-        <div className="flex between items-center">
-          <div className="section-label" style={{ marginBottom: 0 }}>
-            Vocabulary
-          </div>
-          <button className={`btn btn-sm ${progress.tasks.vocab ? 'btn-primary' : ''}`} onClick={() => void mark('vocab', !progress.tasks.vocab)}>
-            {progress.tasks.vocab ? 'Completed ✓' : 'Mark completed'}
-          </button>
-        </div>
-        <div className="mt-12" style={{ marginTop: 12 }}>
-          {plan.vocab.map((v) => (
-            <div key={v.word} className="vocab-row">
-              <div className="vocab-word">{v.word}</div>
-              <div className="vocab-trans">
-                {v.translation} <span className="text-muted text-xs">({v.part_of_speech})</span>
-                <div className="text-xs text-muted mt-8" style={{ marginTop: 8 }}>
-                  {v.examples?.[0] || ''}
-                </div>
-              </div>
-              <button className="btn btn-ghost btn-sm" onClick={() => speakGerman(v.word)}>
-                🔊
+      <div className="hub-grid">
+        {sections.map((s) => (
+          <div
+            key={s.id}
+            className={`hub-card${s.done ? ' hub-card-done' : ''}`}
+            onClick={() => nav(s.route)}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <span style={{ fontSize: '2rem' }}>{s.icon}</span>
+              {s.done && (
+                <span style={{ color: 'var(--mint)', fontWeight: 800, fontSize: 12 }}>✓ Done</span>
+              )}
+            </div>
+            <div>
+              <div className="hub-card-title">{s.title}</div>
+              <div className="hub-card-subtitle">{s.subtitle}</div>
+              <div className="hub-card-detail">{s.detail}</div>
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+              <button
+                className="btn btn-primary btn-sm"
+                style={{ flex: 1 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nav(s.route);
+                }}
+              >
+                {s.done ? 'Review →' : 'Start →'}
               </button>
-              <button className="btn btn-sm" onClick={() => void apiPost('/vocab/add', { word: v.word, level: plan.level }).catch(() => {})}>
-                Add
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="card">
-        <div className="flex between items-center">
-          <div>
-            <div className="section-label" style={{ marginBottom: 0 }}>
-              Grammar
-            </div>
-            <div className="serif" style={{ fontSize: 20, fontWeight: 800, marginTop: 8 }}>
-              {plan.grammar.topic}
+              {s.id !== 'resources' && (
+                <button
+                  className={`btn btn-sm${s.done ? ' btn-primary' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    void mark(s.id as TaskKey, !s.done);
+                  }}
+                  title={s.done ? 'Mark incomplete' : 'Mark complete'}
+                >
+                  {s.done ? '✓' : 'Done'}
+                </button>
+              )}
             </div>
           </div>
-          <button className={`btn btn-sm ${progress.tasks.grammar ? 'btn-primary' : ''}`} onClick={() => void mark('grammar', !progress.tasks.grammar)}>
-            {progress.tasks.grammar ? 'Completed ✓' : 'Mark completed'}
-          </button>
-        </div>
-        <div className="explanation-box mt-12">{plan.grammar.explanation}</div>
-        {plan.grammar.exercises?.length ? (
-          <>
-            <div className="section-label mb-8">Exercises</div>
-            {plan.grammar.exercises.map((ex, i) => (
-              <Exercise key={i} sentence={ex.sentence} answer={ex.answer} hint={ex.hint} />
-            ))}
-          </>
-        ) : null}
+        ))}
       </div>
 
       <div className="card">
-        <div className="flex between items-center">
-          <div className="section-label" style={{ marginBottom: 0 }}>
-            Reading — {plan.reading.theme}
-          </div>
-          <button className={`btn btn-sm ${progress.tasks.reading ? 'btn-primary' : ''}`} onClick={() => void mark('reading', !progress.tasks.reading)}>
-            {progress.tasks.reading ? 'Completed ✓' : 'Mark completed'}
-          </button>
-        </div>
-        <div className="serif" style={{ fontSize: 22, fontWeight: 900, marginTop: 12 }}>
-          {plan.reading.title}
-        </div>
-        <div className="article-body mt-12" style={{ marginTop: 12, whiteSpace: 'pre-wrap' }}>
-          {plan.reading.article}
-        </div>
-        <div className="mt-16" style={{ marginTop: 16 }}>
-          <div className="section-label">Questions</div>
-          {plan.reading.questions?.map((q, i) => (
-            <details key={i} className="question-item">
-              <summary className="q-text">
-                {i + 1}. {q.q}
-              </summary>
-              <div className="a-text">{q.a}</div>
-            </details>
-          ))}
-        </div>
-      </div>
-
-      <div className="card">
-        <div className="flex between items-center">
-          <div className="section-label" style={{ marginBottom: 0 }}>
-            Roleplay
-          </div>
-          <button className={`btn btn-sm ${progress.tasks.roleplay ? 'btn-primary' : ''}`} onClick={() => void mark('roleplay', !progress.tasks.roleplay)}>
-            {progress.tasks.roleplay ? 'Completed ✓' : 'Mark completed'}
-          </button>
-        </div>
-        <div className="serif" style={{ fontSize: 20, fontWeight: 900, marginTop: 12 }}>
-          {plan.roleplay.scenario_title}
-        </div>
-        <div className="text-sm text-muted mt-8" style={{ marginTop: 8 }}>
-          Opening: {plan.roleplay.opening}
-        </div>
-        <div className="mt-12" style={{ marginTop: 12 }}>
-          <div className="section-label">Target phrases</div>
-          <div className="flex gap-8 flex-wrap">
-            {plan.roleplay.target_phrases.map((p, i) => (
-              <span key={i} className="vocab-ef">
-                {p}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="mt-16" style={{ marginTop: 16 }}>
-          <Link className="btn btn-primary" to="/roleplay">
-            Open roleplay
-          </Link>
-        </div>
-      </div>
-
-      <div className="card">
-        <div className="section-label">YouTube resources</div>
-        <div className="flex gap-12 flex-wrap">
-          {plan.youtube.map((y, i) => (
-            <div key={i} className="card" style={{ flex: 1, minWidth: 250, padding: 12 }}>
-              <div className="text-xs uppercase text-muted mb-8">{y.channel}</div>
-              <iframe
-                width="100%"
-                height="180"
-                src={y.url}
-                style={{ borderRadius: 4, border: '1px solid var(--border)' }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title={y.title}
-              />
-              <div className="text-sm mt-8">{y.title}</div>
-              <div className="text-xs text-muted mt-8">{y.why_relevant}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="card">
-        <div className="section-label">End-of-day test</div>
+        <div className="section-label">End-of-day Test</div>
         {!allTasksDone ? (
-          <div className="msg-box msg-info">Finish vocab, grammar, reading, and roleplay to unlock the test.</div>
+          <div className="msg-box msg-info">Complete all 4 sections to unlock the daily test.</div>
         ) : (
           <>
             <button className="btn btn-primary" onClick={() => void generateTest()} disabled={!!test}>
-              {test ? 'Test ready' : 'Generate test'}
+              {test ? 'Test ready ▼' : 'Generate test'}
             </button>
-            {testErr ? <div className="msg-box msg-error mt-12">{testErr}</div> : null}
+            {testErr ? <div className="msg-box msg-error" style={{ marginTop: 12 }}>{testErr}</div> : null}
             {test ? (
-              <div className="mt-16">
-                {test.questions.map((q: any, i: number) => (
+              <div style={{ marginTop: 16 }}>
+                {test.questions.map((q, i) => (
                   <div key={i} className="exercise-item">
                     <div className="exercise-sentence">
                       {i + 1}. {q.prompt}
@@ -279,25 +248,39 @@ export function PlanPage() {
                             key={oi}
                             className="answer-btn"
                             onClick={() => setAnswers((a) => ({ ...a, [String(i)]: oi }))}
-                            style={answers[String(i)] === oi ? { borderColor: 'var(--violet)' } : undefined}
+                            style={
+                              answers[String(i)] === oi
+                                ? { borderColor: 'var(--violet)', background: 'var(--violet-soft)' }
+                                : undefined
+                            }
                           >
-                            <span className="ans-letter">{['A', 'B', 'C', 'D'][oi] || '?'}</span>
+                            <span className="ans-letter">{(['A', 'B', 'C', 'D'] as const)[oi] ?? '?'}</span>
                             <span>{opt}</span>
                           </button>
                         ))}
                       </div>
                     ) : (
-                      <input value={answers[String(i)] || ''} onChange={(e) => setAnswers((a) => ({ ...a, [String(i)]: e.target.value }))} />
+                      <input
+                        value={String(answers[String(i)] || '')}
+                        onChange={(e) => setAnswers((a) => ({ ...a, [String(i)]: e.target.value }))}
+                        placeholder="Your answer…"
+                      />
                     )}
                   </div>
                 ))}
-                <button className="btn btn-primary full-w mt-16" onClick={() => void submitTest()}>
+                <button className="btn btn-primary full-w" style={{ marginTop: 16 }} onClick={() => void submitTest()}>
                   Submit test
                 </button>
                 {submitRes ? (
-                  <div className={`msg-box ${submitRes?.result?.pass ? 'msg-success' : 'msg-error'} mt-12`}>
-                    Score: {submitRes.result.score} — {submitRes.result.pass ? 'Pass' : 'Fail'}
-                    <div className="text-sm mt-8">{submitRes.result.feedback}</div>
+                  <div
+                    className={`msg-box ${submitRes.result.pass ? 'msg-success' : 'msg-error'}`}
+                    style={{ marginTop: 12 }}
+                  >
+                    Score: {submitRes.result.score} —{' '}
+                    {submitRes.result.pass ? 'Pass 🎉' : 'Keep practicing'}
+                    {submitRes.result.feedback && (
+                      <div style={{ fontSize: 13, marginTop: 8 }}>{submitRes.result.feedback}</div>
+                    )}
                   </div>
                 ) : null}
               </div>
@@ -308,33 +291,3 @@ export function PlanPage() {
     </div>
   );
 }
-
-function Exercise({ sentence, answer, hint }: { sentence: string; answer: string; hint?: string }) {
-  const [val, setVal] = useState('');
-  const [res, setRes] = useState<'idle' | 'correct' | 'wrong'>('idle');
-  return (
-    <div className="exercise-item">
-      <div className="exercise-sentence">{sentence}</div>
-      {hint ? (
-        <div className="text-xs text-muted mb-8">Hint: {hint}</div>
-      ) : null}
-      <div className="exercise-row" style={{ display: 'flex', gap: 10 }}>
-        <input value={val} onChange={(e) => setVal(e.target.value)} placeholder="Answer…" />
-        <button
-          className="btn btn-sm"
-          onClick={() => setRes(val.trim().toLowerCase() === answer.trim().toLowerCase() ? 'correct' : 'wrong')}
-        >
-          Check
-        </button>
-      </div>
-      {res === 'idle' ? null : res === 'correct' ? (
-        <div className="result-correct">Correct ✓</div>
-      ) : (
-        <div className="result-wrong">
-          Incorrect — correct answer: <strong>{answer}</strong>
-        </div>
-      )}
-    </div>
-  );
-}
-

@@ -1,9 +1,9 @@
 {
   "2026-05-09": {
     "tasks": {
-      "vocab": false,
-      "grammar": false,
-      "reading": false,
+      "vocab": true,
+      "grammar": true,
+      "reading": true,
       "roleplay": false
     },
     "minutes_tracked": 0,

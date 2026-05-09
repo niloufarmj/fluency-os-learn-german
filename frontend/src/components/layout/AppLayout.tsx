@@ -51,6 +51,9 @@ export function AppLayout() {
           <NavLink className={navClass} to="/roleplay">
             <span className="nav-icon">🎭</span> Roleplay
           </NavLink>
+          <NavLink className={navClass} to="/resources">
+            <span className="nav-icon">📺</span> Resources
+          </NavLink>
           <NavLink className={navClass} to="/settings">
             <span className="nav-icon">⚙️</span> Settings
           </NavLink>
