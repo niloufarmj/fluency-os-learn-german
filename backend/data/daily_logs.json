@@ -3,5 +3,125 @@
     "date": "2026-05-06T11:06:19.146Z",
     "type": "daily_activity",
     "active_minutes": 16
+  },
+  {
+    "date": "2026-05-08T13:24:50.582Z",
+    "type": "daily_activity",
+    "active_minutes": 1
+  },
+  {
+    "date": "2026-05-09T11:36:59.471Z",
+    "type": "daily_activity",
+    "active_minutes": 17
+  },
+  {
+    "date": "2026-05-09T13:39:03.551517",
+    "type": "placement_exam",
+    "name": "Nili",
+    "final_level": "N/A",
+    "history": []
+  },
+  {
+    "date": "2026-05-09T14:17:56.668380",
+    "type": "placement_exam",
+    "name": "Nili",
+    "final_level": "N/A",
+    "history": []
+  },
+  {
+    "date": "2026-05-09T15:03:33.167416",
+    "type": "placement_exam",
+    "name": "Nili",
+    "final_level": "A1",
+    "history": [
+      {
+        "questionId": 1,
+        "level": "A1",
+        "type": "multiple_choice",
+        "category": "Grammar",
+        "q": "Hallo! ___ bist du?",
+        "passages": null,
+        "correct_answer": 1,
+        "user_answer": 1,
+        "score": null
+      },
+      {
+        "questionId": 2,
+        "level": "A1",
+        "type": "multiple_choice",
+        "category": "Vocabulary",
+        "q": "Der Bruder von meiner Mutter ist mein ___.",
+        "passages": null,
+        "correct_answer": 2,
+        "user_answer": 2,
+        "score": null
+      },
+      {
+        "questionId": 3,
+        "level": "A1",
+        "type": "writing_blank",
+        "category": "Writing",
+        "q": "Fill in the blank: 'Ich komme ___ Deutschland.'",
+        "passages": null,
+        "correct_answer": "aus",
+        "user_answer": "aus",
+        "score": null
+      },
+      {
+        "questionId": 4,
+        "level": "A1",
+        "type": "listening",
+        "category": "Listening",
+        "q": "What is the person ordering?",
+        "passages": "Guten Tag, ich hätte gern einen Kaffee mit Milch, bitte.",
+        "correct_answer": 1,
+        "user_answer": 1,
+        "score": null
+      },
+      {
+        "questionId": 5,
+        "level": "A2",
+        "type": "multiple_choice",
+        "category": "Grammar",
+        "q": "Ich bleibe heute zu Hause, ___ ich krank bin.",
+        "passages": null,
+        "correct_answer": 1,
+        "user_answer": 1,
+        "score": null
+      },
+      {
+        "questionId": 6,
+        "level": "A2",
+        "type": "speaking_blank",
+        "category": "Speaking",
+        "q": "Say this sentence, filling in the correct verb: 'Gestern ___ ich im Kino.'",
+        "passages": null,
+        "correct_answer": "war",
+        "user_answer": "war",
+        "score": null
+      },
+      {
+        "questionId": 7,
+        "level": "A2",
+        "type": "reading",
+        "category": "Reading",
+        "q": "Was ist Thomas von Beruf?",
+        "passages": "Thomas ist 25 Jahre alt und wohnt in München. Er arbeitet als Ingenieur und liebt Fußball.",
+        "correct_answer": 2,
+        "user_answer": 2,
+        "score": null
+      },
+      {
+        "questionId": 8,
+        "level": "A2",
+        "type": "writing_full",
+        "category": "Writing",
+        "q": "Write 2 sentences in German about what you did yesterday (Min 10 words total).",
+        "passages": null,
+        "correct_answer": null,
+        "user_answer": "__CANT_ANSWER_ANYMORE__",
+        "score": null
+      }
+    ]
   }
 ]

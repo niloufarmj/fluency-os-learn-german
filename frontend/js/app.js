@@ -1,7 +1,5 @@
 'use strict';
 
-
-
 // ══════════════════════════════════════════════
 // ROUTING
 // ══════════════════════════════════════════════
@@ -32,8 +30,8 @@ const today = () => new Date().toISOString().split('T')[0];
 function spin(msg = 'Loading…') {
   return `<div class="spinner-wrap"><div class="spinner"></div>${msg}</div>`;
 }
-function errBox(msg)  { return `<div class="msg-box msg-error">${esc(msg)}</div>`; }
-function okBox(msg)   { return `<div class="msg-box msg-success">${esc(msg)}</div>`; }
+function errBox(msg) { return `<div class="msg-box msg-error">${esc(msg)}</div>`; }
+function okBox(msg) { return `<div class="msg-box msg-success">${esc(msg)}</div>`; }
 function infoBox(msg) { return `<div class="msg-box msg-info">${msg}</div>`; }
 
 function esc(s) {
@@ -48,36 +46,31 @@ function fmtDate(iso) {
   return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
 }
 
-// Native Text-to-Speech (Zero token cost)
 function speakGerman(text) {
   if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel(); // Stop current speech
+  window.speechSynthesis.cancel();
   const msg = new SpeechSynthesisUtterance(text);
   msg.lang = 'de-DE';
-  msg.rate = 0.9; // Slightly slower for learning
-  
-  // Try to find a native Google/Apple German voice
+  msg.rate = 0.9;
   const voices = window.speechSynthesis.getVoices();
   const deVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE');
   if (deVoice) msg.voice = deVoice;
-  
   window.speechSynthesis.speak(msg);
 }
 
-// Ensure voices are loaded (browser quirk)
 window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 
 // ══════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════
 function initTheme() {
-  const saved = localStorage.getItem('fluency_theme') || 'light';
+  const saved = localStorage.getItem('fluency_theme') || 'dark';
   document.documentElement.dataset.theme = saved;
   updateThemeBtn();
 }
 
 function toggleTheme() {
-  const cur = document.documentElement.dataset.theme || 'light';
+  const cur = document.documentElement.dataset.theme || 'dark';
   setTheme(cur === 'dark' ? 'light' : 'dark');
 }
 
@@ -85,14 +78,10 @@ function setTheme(t) {
   document.documentElement.dataset.theme = t;
   localStorage.setItem('fluency_theme', t);
   updateThemeBtn();
-  const lightBtn = document.querySelector('[onclick="setTheme(\'light\')"]');
-  const darkBtn  = document.querySelector('[onclick="setTheme(\'dark\')"]');
-  if (lightBtn) lightBtn.classList.toggle('btn-primary', t === 'light');
-  if (darkBtn)  darkBtn.classList.toggle('btn-primary', t === 'dark');
 }
 
 function updateThemeBtn() {
-  const t = document.documentElement.dataset.theme || 'light';
+  const t = document.documentElement.dataset.theme || 'dark';
   const btn = document.getElementById('theme-toggle');
   if (btn) btn.innerHTML = t === 'dark' ? '☀️ &nbsp;Light Mode' : '🌙 &nbsp;Dark Mode';
 }
@@ -102,60 +91,50 @@ function updateThemeBtn() {
 // ══════════════════════════════════════════════
 function updateSidebarProfile(profile) {
   if (!profile) return;
-  const nameEl   = document.getElementById('sidebar-user-name');
+  const nameEl = document.getElementById('sidebar-user-name');
   const avatarEl = document.getElementById('sidebar-user-avatar');
-  const levelEl  = document.getElementById('sidebar-level');
-  if (nameEl)   nameEl.textContent   = profile.name || 'Learner';
+  const levelEl = document.getElementById('sidebar-level');
+  if (nameEl) nameEl.textContent = profile.name || 'Learner';
   if (avatarEl) avatarEl.textContent = (profile.name || 'G')[0].toUpperCase();
-  if (levelEl)  levelEl.textContent  = profile.level || 'A2';
+  if (levelEl) levelEl.textContent = profile.level || 'A2';
 }
 
 // ══════════════════════════════════════════════
 // VOCABULARY HELPERS
 // ══════════════════════════════════════════════
 const DAILY_WORDS = [
-  { word: 'die Freiheit',    part_of_speech: 'noun',      translation: 'freedom' },
-  { word: 'gemütlich',       part_of_speech: 'adjective', translation: 'cozy, comfortable' },
-  { word: 'das Abenteuer',   part_of_speech: 'noun',      translation: 'adventure' },
-  { word: 'aufgeregt',       part_of_speech: 'adjective', translation: 'excited, agitated' },
-  { word: 'das Fernweh',     part_of_speech: 'noun',      translation: 'wanderlust' },
-  { word: 'die Weltanschauung', part_of_speech: 'noun',   translation: 'worldview, philosophy of life' },
-  { word: 'die Sehnsucht',   part_of_speech: 'noun',      translation: 'longing, yearning' },
-  { word: 'überrascht',      part_of_speech: 'adjective', translation: 'surprised' },
-  { word: 'der Zusammenhalt',part_of_speech: 'noun',      translation: 'cohesion, solidarity' },
-  { word: 'neugierig',       part_of_speech: 'adjective', translation: 'curious' },
-  { word: 'die Freude',      part_of_speech: 'noun',      translation: 'joy, delight' },
-  { word: 'selbstständig',   part_of_speech: 'adjective', translation: 'independent, self-employed' },
-  { word: 'das Heimweh',     part_of_speech: 'noun',      translation: 'homesickness' },
-  { word: 'leidenschaftlich',part_of_speech: 'adjective', translation: 'passionate' },
+  { word: 'die Freiheit', part_of_speech: 'noun', translation: 'freedom' },
+  { word: 'gemütlich', part_of_speech: 'adjective', translation: 'cozy, comfortable' },
+  { word: 'das Abenteuer', part_of_speech: 'noun', translation: 'adventure' },
+  { word: 'aufgeregt', part_of_speech: 'adjective', translation: 'excited, agitated' },
+  { word: 'das Fernweh', part_of_speech: 'noun', translation: 'wanderlust' },
+  { word: 'die Weltanschauung', part_of_speech: 'noun', translation: 'worldview' },
+  { word: 'die Sehnsucht', part_of_speech: 'noun', translation: 'longing, yearning' },
+  { word: 'überrascht', part_of_speech: 'adjective', translation: 'surprised' },
+  { word: 'der Zusammenhalt', part_of_speech: 'noun', translation: 'cohesion' },
+  { word: 'neugierig', part_of_speech: 'adjective', translation: 'curious' },
+  { word: 'die Freude', part_of_speech: 'noun', translation: 'joy' },
+  { word: 'selbstständig', part_of_speech: 'adjective', translation: 'independent' },
+  { word: 'das Heimweh', part_of_speech: 'noun', translation: 'homesickness' },
+  { word: 'leidenschaftlich', part_of_speech: 'adjective', translation: 'passionate' },
 ];
 
-function renderVocabRows(words, t) {
-  if (!words.length) return '<p class="text-muted text-sm mt-8">No words match your search.</p>';
-  return words.map(w => {
-    const due = w.next_review && w.next_review <= t;
-    return `
-      <div class="vocab-row">
-        <button class="btn btn-ghost" style="padding:4px 6px;font-size:14px;" onclick="speakGerman('${esc(w.word)}')">🔊</button>
-        <span class="vocab-word">${esc(w.word)}</span>
-        <span class="vocab-trans">${esc(w.translation || '')}</span>
-        ${w.level ? `<span class="vocab-level-tag">${esc(w.level)}</span>` : ''}
-        <span class="${due ? 'vocab-due' : 'text-muted'} text-xs">${due ? '⚡ Due now' : 'Next: ' + fmtDate(w.next_review)}</span>
-        <span class="vocab-ef">EF ${(+(w.ease_factor || 2.5)).toFixed(1)}</span>
-      </div>`;
-  }).join('');
+function nextLevel(lvl) {
+  const map = {A1:'A2', A2:'B1', B1:'B2', B2:'C1', C1:'C2'};
+  return map[lvl] || 'B1';
 }
 
-function filterVocab(query) {
-  const t = today();
-  const q = query.toLowerCase().trim();
-  const filtered = q
-    ? S.vocab.filter(w =>
-        (w.word || '').toLowerCase().includes(q) ||
-        (w.translation || '').toLowerCase().includes(q))
-    : S.vocab;
-  const list = document.getElementById('vocab-list');
-  if (list) list.innerHTML = renderVocabRows(filtered, t);
+function calculateTodayXP(logs) {
+  const today = new Date().toISOString().split('T')[0];
+  let xp = 0;
+  (logs || []).forEach(l => {
+    if (l.date && l.date.startsWith(today)) {
+      xp += (l.active_minutes || 0) * 10;
+      if (l.type === 'roleplay') xp += (l.score || 0) * 5;
+      if (l.type === 'placement_exam') xp += 50;
+    }
+  });
+  return Math.min(300, xp);
 }
 
 // ══════════════════════════════════════════════
@@ -164,119 +143,245 @@ function filterVocab(query) {
 async function renderDashboard(c) {
   const h = new Date().getHours();
   const greet = h < 12 ? 'Guten Morgen' : h < 18 ? 'Guten Tag' : 'Guten Abend';
+  const name = S.profile?.name || 'Learner';
 
   c.innerHTML = `
-    <h2 class="module-title">${greet}! 👋</h2>
-    <p class="module-sub">Your daily German learning overview</p>
-
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-label">Current Level</div><div class="stat-value" id="st-lvl">—</div></div>
-      <div class="stat-card"><div class="stat-label">Day Streak</div><div class="stat-value" id="st-streak">—</div></div>
-      <div class="stat-card"><div class="stat-label">Words Mastered</div><div class="stat-value" id="st-words">—</div></div>
-    </div>
-
-    <div class="card daily-goal-card">
-      <div class="flex between items-center mb-10">
-        <div class="section-label" style="margin-bottom:0">Daily Goal</div>
-        <div class="text-xs text-muted" id="goal-label">0 / 30 min</div>
-      </div>
-      <div class="progress-bar" style="margin-bottom:0">
-        <div class="progress-fill" id="goal-bar" style="width:0%;background:var(--accent)"></div>
-      </div>
-    </div>
-
-    <div class="wotd-card" id="wotd-card">
-      <div>
-        <div class="section-label">Word of the Day</div>
-        <div class="wotd-word" id="wotd-word">—</div>
-        <div class="wotd-details">
-          <span class="wotd-pos" id="wotd-pos"></span>
-          <span class="wotd-trans" id="wotd-trans"></span>
+    <div class="module">
+      <div class="hero-banner">
+        <div class="hero-greet">${greet}, ${esc(name)}</div>
+        <div class="hero-title">You're crushing it, ${esc(name)}! ${S.profile?.streak || 0} days</div>
+        <div class="hero-sub">Ready for today's lesson? Your daily plan is queued and ready to go.</div>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="go('vocabulary')">
+            <span>▶</span> Continue today's plan
+          </button>
+          <button class="btn" onclick="go('reading')">Browse stories</button>
         </div>
       </div>
-      <button class="btn btn-ghost" id="wotd-speak" style="font-size:22px;padding:8px 12px;">🔊</button>
-    </div>
 
-    <div class="card">
-      <div class="section-label">Today's Plan</div>
-      <div id="plan-area">${spin('Generating plan…')}</div>
-    </div>
-    <div class="card mt-12">
-      <div class="section-label">30-Day Activity</div>
-      <div id="cal-area"></div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">🔥 Streak</div>
+          <div class="stat-value" id="st-streak">—</div>
+          <div class="text-xs text-muted mt-4">days • best ${S.profile?.best_streak || '—'}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">⚡ XP Today</div>
+          <div class="stat-value" id="st-xp">—</div>
+          <div class="text-xs text-muted mt-4">of 300 goal</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">🏆 Level</div>
+          <div class="stat-value" id="st-lvl">—</div>
+          <div class="text-xs text-muted mt-4" id="st-lvl-pct">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">🎯 CEFR</div>
+          <div class="stat-value" id="st-cefr">—</div>
+          <div class="text-xs text-muted mt-4" id="st-cefr-track">—</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-main">
+          <div class="card plan-card">
+            <div class="plan-header">
+              <div class="section-label" style="margin-bottom:0">Today's Plan</div>
+              <div class="plan-time" id="plan-time">0 / 30 min</div>
+            </div>
+            <div class="progress-bar mb-16">
+              <div class="progress-fill" id="plan-bar" style="width:0%"></div>
+            </div>
+            <div id="plan-area">${spin('Generating plan…')}</div>
+            <div class="text-xs text-muted mt-12 italic" style="text-align:center;">
+              🔒 Complete all tasks to unlock tomorrow's content
+            </div>
+          </div>
+
+          <div class="wotd-card" id="wotd-card">
+            <div>
+              <div class="section-label">Word of the Day</div>
+              <div class="wotd-word" id="wotd-word">—</div>
+              <div class="mt-8">
+                <span class="wotd-pos" id="wotd-pos"></span>
+                <span class="wotd-trans" id="wotd-trans"></span>
+              </div>
+            </div>
+            <button class="btn btn-ghost" id="wotd-speak" style="font-size:20px;">🔊</button>
+          </div>
+        </div>
+
+        <div class="dashboard-side">
+          <div class="streak-card">
+            <div class="streak-flame">🔥</div>
+            <div class="streak-count" id="side-streak">0</div>
+            <div class="streak-label">Day Streak</div>
+            <div class="week-tracker" id="week-tracker"></div>
+            <div class="streak-msg" id="streak-msg">Keep going to hit 50!</div>
+          </div>
+
+          <div class="card">
+            <div class="section-label">Recent Unlocks</div>
+            <div class="unlocks-grid" id="unlocks-grid"></div>
+          </div>
+
+          <div class="card path-card">
+            <div class="path-header">
+              <div class="section-label" style="margin-bottom:0">Your Path</div>
+              <div class="path-level" id="path-level">A2</div>
+            </div>
+            <div class="path-track">
+              <div class="path-node completed">A1</div>
+              <div class="path-line"><div class="path-line-fill" style="width:100%"></div></div>
+              <div class="path-node active" id="path-current">A2</div>
+              <div class="path-line"><div class="path-line-fill" style="width:0%"></div></div>
+              <div class="path-node" id="path-next">B1</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   `;
 
   try {
-    const [plan, profile, vocab] = await Promise.all([
+    const [plan, profile, vocab, logs] = await Promise.all([
       api('GET','/daily-plan'),
       api('GET','/profile'),
       api('GET','/vocab'),
+      api('GET','/logs'),
     ]);
     S.profile = profile; S.vocab = vocab;
     updateSidebarProfile(profile);
-    $('st-lvl').textContent    = profile.level;
-    $('st-streak').textContent = profile.streak || 0;
-    $('st-words').textContent  = vocab.filter(w => (w.interval_days || 0) >= 21).length;
 
-    // Daily goal progress
-    const goal    = profile.daily_time_minutes || 30;
-    const studied = Math.floor(activeSeconds / 60);
-    const pct     = Math.min(100, Math.round((studied / goal) * 100));
-    $('goal-label').textContent = `${studied} / ${goal} min`;
-    $('goal-bar').style.width   = pct + '%';
+    const streak = profile.streak || 0;
+    const wordsMastered = vocab.filter(w => (w.interval_days || 0) >= 21).length;
+    const xpToday = calculateTodayXP(logs);
+    const lvl = profile.level || 'A2';
+    const lvlPct = Math.round((wordsMastered % 50) / 50 * 100);
 
-    // Word of the Day — use vocab deck if available, else curated list
+    $('st-streak').textContent = streak;
+    $('st-xp').textContent = xpToday;
+    $('st-lvl').textContent = 14;
+    $('st-lvl-pct').textContent = `${lvlPct}% to lvl 15`;
+    $('st-cefr').textContent = lvl;
+    $('st-cefr-track').textContent = `tracking ${nextLevel(lvl)} in 6 wks`;
+    $('side-streak').textContent = streak;
+    $('path-level').textContent = lvl;
+    $('path-current').textContent = lvl;
+    $('path-next').textContent = nextLevel(lvl);
+
+    const goal = profile.daily_time_minutes || 30;
+    const studied = Math.min(goal, Math.floor(activeSeconds / 60));
+    const pct = Math.min(100, Math.round((studied / goal) * 100));
+    $('plan-time').textContent = `${studied} / ${goal} min`;
+    $('plan-bar').style.width = pct + '%';
+
     const source = vocab.length > 0 ? vocab : DAILY_WORDS;
-    const wotd   = source[new Date().getDate() % source.length];
-    $('wotd-word').textContent  = wotd.word;
-    $('wotd-pos').textContent   = wotd.part_of_speech || '';
+    const wotd = source[new Date().getDate() % source.length];
+    $('wotd-word').textContent = wotd.word;
+    $('wotd-pos').textContent = wotd.part_of_speech || '';
     $('wotd-trans').textContent = wotd.translation || '';
     const speakBtn = $('wotd-speak');
     if (speakBtn) speakBtn.onclick = () => speakGerman(wotd.word);
 
-    buildPlan($('plan-area'), plan.tasks);
-    buildCalendar($('cal-area'));
+    buildPlan($('plan-area'), plan.tasks, studied, goal);
+    buildWeekTracker($('week-tracker'), logs, goal);
+    buildUnlocks($('unlocks-grid'), profile, vocab);
+
   } catch(e) {
     $('plan-area').innerHTML = errBox(e.message);
   }
 }
 
-function buildPlan(el, tasks) {
-  const typeMap = { vocab_review:'vocabulary', grammar:'grammar', reading:'reading' };
-  const detail = t => {
-    if (t.type==='vocab_review') return `Review ${t.count} flashcards`;
-    if (t.type==='grammar')      return t.topic;
-    if (t.type==='reading')      return `${t.level} level article`;
-    return '';
-  };
-  el.innerHTML = `<div class="task-list">` + tasks.map(t => `
-    <div class="task-item" data-mod="${typeMap[t.type]||'dashboard'}">
-      <input type="checkbox" onclick="event.stopPropagation()">
+function buildPlan(el, tasks, studied, goal) {
+  const typeMap = { vocab_review:'vocabulary', grammar:'grammar', reading:'reading', roleplay:'roleplay' };
+  const typeLabels = { vocab_review:'Vocab review', grammar:'Grammar', reading:'Reading', end_of_day_test:'End of Day Test' };
+  const typeIcons = { vocab_review:'🗂️', grammar:'🧩', reading:'📖', roleplay:'🎭', end_of_day_test:'📝' };
+
+  const taskGoal = goal / Math.max(1, tasks.length);
+  const taskProgress = tasks.map((t, i) => {
+    const allocated = Math.min(taskGoal, Math.max(0, studied - i * taskGoal));
+    return Math.min(100, Math.round((allocated / taskGoal) * 100));
+  });
+
+  el.innerHTML = `<div class="task-list">` + tasks.map((t, i) => {
+    const mod = typeMap[t.type] || 'dashboard';
+    const progress = taskProgress[i];
+    const isDone = progress >= 100;
+    const pctClass = isDone ? 'done' : '';
+    const pctText = isDone ? '✓' : `${progress}%`;
+    const pctBg = isDone ? 'var(--mint)' : `conic-gradient(var(--violet) ${progress * 3.6}deg, transparent 0)`;
+
+    let detail = '';
+    if (t.type === 'vocab_review') detail = `Review ${t.count} flashcards`;
+    else if (t.type === 'grammar') detail = t.topic;
+    else if (t.type === 'reading') detail = `${t.level} level article`;
+    else if (t.type === 'end_of_day_test') detail = t.topic || 'Daily assessment';
+    else detail = t.type.replace('_',' ');
+
+    return `
+    <div class="task-item" data-mod="${mod}">
+      <div class="task-check ${pctClass}">${isDone ? '✓' : ''}</div>
       <div class="task-info">
-        <div class="task-type">${t.type.replace('_',' ')}</div>
-        <div class="task-detail">${esc(detail(t))}</div>
+        <div class="task-type">${typeIcons[t.type] || '•'} ${typeLabels[t.type] || t.type.replace('_',' ')}</div>
+        <div class="task-detail">${esc(detail)}</div>
       </div>
-      <div class="task-duration">${t.duration_min} min</div>
-    </div>
-  `).join('') + `</div>`;
+      <div class="task-meta">
+        <div class="task-pct ${pctClass}" style="background:${pctBg}; color:${isDone?'var(--mint)':'var(--ink)'}">${pctText}</div>
+        <div class="text-xs text-muted">${t.duration_min} min</div>
+      </div>
+    </div>`;
+  }).join('') + `</div>`;
+
   el.querySelectorAll('.task-item').forEach(row =>
     row.addEventListener('click', () => go(row.dataset.mod))
   );
 }
 
-function buildCalendar(el) {
-  const t = today();
-  let html = '<div class="calendar-grid">';
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const ds = d.toISOString().split('T')[0];
-    let cls = 'cal-day';
-    if (ds === t) cls += ' today';
-    else if (i < 7 && Math.random() > 0.45) cls += ' met';
-    html += `<div class="${cls}" title="${ds}"></div>`;
+function buildWeekTracker(el, logs, goal) {
+  const days = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+  const today = new Date();
+  const week = [];
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    const dayLogs = (logs || []).filter(l => l.date && l.date.startsWith(dateStr));
+    const minutes = dayLogs.reduce((sum, l) => sum + (l.active_minutes || 0), 0);
+    const pct = Math.min(100, Math.round((minutes / goal) * 100));
+    const isToday = i === 0;
+    const dayName = days[(d.getDay() + 6) % 7];
+    week.push({ day: dayName, pct, isToday, filled: pct >= 100 });
   }
-  el.innerHTML = html + '</div>';
+
+  el.innerHTML = week.map(d => `
+    <div class="day-pill">
+      <div class="day-ring ${d.isToday ? 'today' : ''} ${d.filled ? 'filled' : ''}" style="--pct: ${d.pct}">
+        <div class="day-ring-inner">${d.isToday ? '★' : d.day}</div>
+      </div>
+      <div class="day-label">${d.isToday ? 'Today' : d.day}</div>
+    </div>
+  `).join('');
+}
+
+function buildUnlocks(el, profile, vocab) {
+  const streak = profile?.streak || 0;
+  const words = vocab?.length || 0;
+  const unlocks = [
+    { icon: '🌅', name: 'Frühaufsteher', locked: streak < 7 },
+    { icon: '🔥', name: '30-Day Flame', locked: streak < 30 },
+    { icon: '📚', name: 'Wortschatz', locked: words < 50 },
+    { icon: '💎', name: 'Perfekt', locked: words < 100 },
+    { icon: '🦉', name: 'Philosoph', locked: streak < 14 },
+    { icon: '🏃', name: 'Marathon', locked: streak < 50 },
+  ];
+  el.innerHTML = unlocks.map(u => `
+    <div class="unlock-item ${u.locked ? 'locked' : ''}" title="${u.name}">
+      <div class="unlock-icon">${u.icon}</div>
+      <div style="font-size:10px;">${u.name}</div>
+    </div>
+  `).join('');
 }
 
 // ══════════════════════════════════════════════
@@ -286,196 +391,193 @@ async function renderVocabulary(c) {
   c.innerHTML = `
     <h2 class="module-title">Vocabulary</h2>
     <p class="module-sub">Spaced repetition flashcard system</p>
-    <div class="tabs">
-      <div class="tab active" data-t="review">Review Due</div>
-      <div class="tab" data-t="add">Add Word</div>
-      <div class="tab" data-t="all">All Words</div>
+    <div class="vocab-layout" id="vocab-layout">
+      ${spin('Loading decks…')}
     </div>
-    <div id="vtab"></div>
   `;
-
-  c.querySelectorAll('.tab').forEach(tb => tb.addEventListener('click', () => {
-    c.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-    tb.classList.add('active');
-    showVTab($('vtab'), tb.dataset.t);
-  }));
 
   try {
     S.vocab = await api('GET','/vocab');
-    showVTab($('vtab'), 'review');
+    renderVocabLayout($('vocab-layout'));
   } catch(e) {
-    $('vtab').innerHTML = errBox(e.message);
+    $('vocab-layout').innerHTML = errBox(e.message);
   }
 }
 
-function showVTab(el, tab) {
-  if (tab==='review') vReview(el);
-  else if (tab==='add') vAdd(el);
-  else vAll(el);
+function buildDecks(vocab) {
+  const levels = ['A1','A2','B1','B2'];
+  const icons = ['☕','🏙️','💭','💼','🧳'];
+  const names = ['Café & Food','Around the city','Feelings & opinions','Work & study','Travel'];
+  
+  return levels.map((lv, i) => {
+    const words = vocab.filter(w => w.level === lv);
+    const mastered = words.filter(w => (w.interval_days || 0) >= 7).length;
+    const mastery = words.length ? Math.round((mastered / words.length) * 100) : 0;
+    return {
+      id: lv,
+      name: names[i] || lv,
+      icon: icons[i] || '📚',
+      count: words.length,
+      mastery
+    };
+  }).filter(d => d.count > 0);
 }
 
-function vReview(el) {
+function renderVocabLayout(el) {
   const t = today();
-  S.queue    = S.vocab.filter(w => !w.next_review || w.next_review <= t);
-  S.qIdx     = 0;
-  S.qReviewed= 0;
-
-  if (!S.queue.length) {
-    el.innerHTML = `
-      <div class="card text-center" style="padding:52px;">
-        <div class="serif" style="font-size:1.5rem;margin-bottom:8px;">All caught up!</div>
-        <div class="text-muted text-sm">No words due today. Add words to grow your deck.</div>
-      </div>`;
-    return;
-  }
+  const due = S.vocab.filter(w => !w.next_review || w.next_review <= t);
+  const decks = buildDecks(S.vocab);
 
   el.innerHTML = `
-    <div class="flex between items-center mb-8">
-      <span class="text-muted text-xs" id="prog-txt">0 / ${S.queue.length} reviewed</span>
-      <span class="text-muted text-xs">${S.queue.length} due today</span>
+    <div class="deck-panel">
+      <div class="section-label" style="margin-top:0">Decks</div>
+      <div class="deck-list">
+        <div class="deck-item active" data-deck="due" onclick="showDeck('due')">
+          <div class="deck-icon">🔥</div>
+          <div class="deck-info">
+            <div class="deck-name">Due today</div>
+            <div class="deck-meta">${due.length} cards</div>
+          </div>
+          <div class="deck-arrow">→</div>
+        </div>
+        ${decks.map(d => `
+          <div class="deck-item" data-deck="${esc(d.id)}" onclick="showDeck('${esc(d.id)}')">
+            <div class="deck-icon">${d.icon}</div>
+            <div class="deck-info">
+              <div class="deck-name">${esc(d.name)}</div>
+              <div class="deck-meta">${d.count} cards • ${d.mastery}% mastery</div>
+            </div>
+            <div class="deck-arrow">→</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="session-stats">
+        <div class="section-label" style="margin-top:0">Today's Session</div>
+        <div class="stat-row"><span class="stat-label">Reviewed</span><span class="stat-val" id="s-reviewed">0</span></div>
+        <div class="stat-row"><span class="stat-label">Got it</span><span class="stat-val" style="color:var(--mint)" id="s-got">0</span></div>
+        <div class="stat-row"><span class="stat-label">Stumbled</span><span class="stat-val" style="color:var(--butter)" id="s-stumbled">0</span></div>
+        <div class="stat-row"><span class="stat-label">Forgot</span><span class="stat-val" style="color:var(--rose)" id="s-forgot">0</span></div>
+      </div>
     </div>
-    <div class="progress-bar mb-16"><div class="progress-fill" id="prog-bar" style="width:0%"></div></div>
-    <div id="card-area"></div>
+    <div class="review-area" id="review-area"></div>
   `;
-  drawCard($('card-area'));
+
+  showDeck('due');
 }
 
-function drawCard(el) {
+function showDeck(deckId) {
+  const t = today();
+  let queue = [];
+  if (deckId === 'due') {
+    queue = S.vocab.filter(w => !w.next_review || w.next_review <= t);
+  } else {
+    queue = S.vocab.filter(w => w.level === deckId);
+  }
+
+  document.querySelectorAll('.deck-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.deck === deckId);
+  });
+
+  S.queue = queue;
+  S.qIdx = 0;
+  S.qReviewed = 0;
+  S.sessionStats = { got: 0, stumbled: 0, forgot: 0 };
+
+  renderReviewCard($('review-area'));
+}
+
+function renderReviewCard(el) {
   if (S.qIdx >= S.queue.length) {
     el.innerHTML = `
-      <div class="card text-center" style="padding:52px;">
-        <div class="serif" style="font-size:1.5rem;margin-bottom:8px;">Session complete</div>
+      <div class="review-card">
+        <div class="serif" style="font-size:1.6rem;margin-bottom:8px;">Session complete! 🎉</div>
         <div class="text-muted text-sm">Reviewed ${S.qReviewed} cards.</div>
+        <button class="btn btn-primary mt-20" onclick="go('dashboard')">Back to Dashboard</button>
       </div>`;
     return;
   }
 
-  const w   = S.queue[S.qIdx];
+  const w = S.queue[S.qIdx];
   const sen = (w.sentences && w.sentences[0]) || '';
-  const re  = new RegExp(`(${w.word})`, 'gi');
+  const re = new RegExp(`(${w.word})`, 'gi');
   const front = sen
-    ? sen.replace(re, '<span class="card-blank">___</span>')
-    : `<span class="text-muted">No example — reveal to see the word.</span>`;
+    ? sen.replace(re, '<span style="color:var(--violet);border-bottom:2px dashed var(--violet);">___</span>')
+    : `<span class="text-muted">Tap show answer to reveal</span>`;
 
   el.innerHTML = `
-    <div class="flashcard">
-      <div class="flashcard-inner" id="fc">
-        <div class="flashcard-front">
-          <div class="text-xs text-muted uppercase mb-8">${w.level}</div>
-          <div class="card-sentence">${front}</div>
-          <button class="btn btn-sm mt-20" onclick="flipCard()">Reveal Answer</button>
-        </div>
-        <div class="flashcard-back">
-          <div class="card-pos">${esc(w.part_of_speech||'')}</div>
-          <div class="flex items-center gap-8 justify-center mb-8">
-            <div class="card-word" style="margin-bottom:0;">${esc(w.word)}</div>
-            <button class="btn btn-ghost" style="padding:4px;" onclick="speakGerman('${esc(w.word)}')">🔊</button>
-          </div>
-          <div class="card-translation">${esc(w.translation||'')}</div>
-          <div class="flex items-start justify-center gap-8 mt-16">
-            <div class="card-sentence">${esc(sen)}</div>
-            ${sen ? `<button class="btn btn-ghost" style="padding:2px;" onclick="speakGerman('${esc(sen)}')">🔊</button>` : ''}
-          </div>
-          <div class="quality-btns">
-            <!-- Quality buttons remain the same -->
-            <button class="q-btn q-blackout" onclick="rate(0)">0 — Blackout</button>
-            <button class="q-btn" onclick="rate(3)">3 — Hard</button>
-            <button class="q-btn q-good" onclick="rate(4)">4 — Good</button>
-            <button class="q-btn q-easy" onclick="rate(5)">5 — Easy</button>
-          </div>
+    <div class="review-card" id="review-card">
+      <div class="review-tag">${w.level || 'A2'}</div>
+      <button class="review-speak btn btn-ghost" style="padding:6px 8px;font-size:16px;" onclick="speakGerman('${esc(w.word)}')">🔊</button>
+      
+      <div id="card-front">
+        <div class="review-word">${esc(w.word)}</div>
+        ${w.ipa ? `<div class="review-ipa">/ ${esc(w.ipa)} /</div>` : ''}
+        <div class="review-sentence">${front}</div>
+        <button class="btn btn-primary mt-24" style="min-width:160px;" onclick="flipReview()">Show answer</button>
+      </div>
+      
+      <div id="card-back" style="display:none;">
+        <div class="card-pos">${esc(w.part_of_speech||'')}</div>
+        <div class="review-word" style="color:var(--violet);">${esc(w.word)}</div>
+        <div class="review-translation">${esc(w.translation||'')}</div>
+        <div class="review-sentence text-muted mt-12">${esc(sen)}</div>
+        <div class="rate-grid">
+          <button class="rate-btn r-again" onclick="rateCard(0)">Again</button>
+          <button class="rate-btn r-hard" onclick="rateCard(3)">Hard</button>
+          <button class="rate-btn r-good" onclick="rateCard(4)">Good</button>
+          <button class="rate-btn r-easy" onclick="rateCard(5)">Easy</button>
         </div>
       </div>
-    </div>`;
+    </div>
+    
+    <div class="flex between items-center" style="padding:0 8px;">
+      <span class="text-xs text-muted">Card ${S.qIdx + 1} of ${S.queue.length}</span>
+      <span class="text-xs text-muted">Space to flip</span>
+    </div>
+  `;
 }
 
-function flipCard() {
-  $('fc') && $('fc').classList.add('flipped');
+function flipReview() {
+  const front = document.getElementById('card-front');
+  const back = document.getElementById('card-back');
+  if (front) front.style.display = 'none';
+  if (back) back.style.display = 'block';
 }
 
-async function rate(q) {
+document.addEventListener('keydown', e => {
+  if (S.module !== 'vocabulary') return;
+  if (e.code === 'Space') {
+    const back = document.getElementById('card-back');
+    if (back && back.style.display === 'none') {
+      e.preventDefault();
+      flipReview();
+    }
+  }
+});
+
+async function rateCard(q) {
   const w = S.queue[S.qIdx];
+  if (!S.sessionStats) S.sessionStats = { got: 0, stumbled: 0, forgot: 0 };
+  if (q <= 1) S.sessionStats.forgot++;
+  else if (q === 3) S.sessionStats.stumbled++;
+  else S.sessionStats.got++;
+
+  const gotEl = document.getElementById('s-got');
+  const stEl = document.getElementById('s-stumbled');
+  const foEl = document.getElementById('s-forgot');
+  const revEl = document.getElementById('s-reviewed');
+  if (gotEl) gotEl.textContent = S.sessionStats.got;
+  if (stEl) stEl.textContent = S.sessionStats.stumbled;
+  if (foEl) foEl.textContent = S.sessionStats.forgot;
+  if (revEl) revEl.textContent = S.qIdx + 1;
+
   await api('POST','/vocab/review',{word:w.word, quality:q}).catch(()=>{});
   S.qIdx++; S.qReviewed++;
-  const pct = (S.qReviewed / S.queue.length) * 100;
-  const pt  = $('prog-txt');
-  const pb  = $('prog-bar');
-  if (pt) pt.textContent = `${S.qReviewed} / ${S.queue.length} reviewed`;
-  if (pb) pb.style.width = pct + '%';
-  drawCard($('card-area'));
-}
-
-function vAdd(el) {
-  el.innerHTML = `
-    <div class="card">
-      <div class="section-label">Add New Word</div>
-      <div class="flex gap-8 mb-8">
-        <input type="text" id="word-inp" placeholder="Enter a German word…">
-        <button class="btn btn-primary" id="add-btn" onclick="doAddWord()">Add</button>
-      </div>
-      <div id="add-res"></div>
-    </div>`;
-  $('word-inp').addEventListener('keydown', e => { if(e.key==='Enter') doAddWord(); });
-}
-
-async function doAddWord() {
-  const inp = $('word-inp');
-  const w   = inp.value.trim();
-  if (!w) return;
-  const res = $('add-res');
-  const btn = $('add-btn');
-  res.innerHTML = spin('Generating examples…');
-  btn.disabled  = true;
-
-  try {
-    if (!S.profile) S.profile = await api('GET','/profile');
-    const entry = await api('POST','/vocab/add',{word:w, level:S.profile.level});
-    let html = okBox(`Added "${entry.word}" to your deck`);
-    if (entry.translation) {
-      html += `<div class="text-sm mt-8"><span class="text-muted">Translation:</span> <strong>${esc(entry.translation)}</strong>`;
-      if (entry.part_of_speech) html += ` <span class="text-muted">(${esc(entry.part_of_speech)})</span>`;
-      html += '</div>';
-    }
-    if (entry.sentences && entry.sentences.length) {
-      html += `<div class="section-label mt-16">Example Sentences</div>`;
-      entry.sentences.forEach((s,i) =>
-        html += `<div class="example-line">${i+1}. ${esc(s)}</div>`
-      );
-    }
-    res.innerHTML = html;
-    inp.value = '';
-    S.vocab = await api('GET','/vocab');
-  } catch(e) {
-    res.innerHTML = errBox(e.message);
-  } finally {
-    btn.disabled = false;
-  }
-}
-
-function vAll(el) {
-  if (!S.vocab.length) {
-    el.innerHTML = `
-      <div class="card text-center" style="padding:44px;">
-        <div class="serif" style="font-size:1.3rem;margin-bottom:8px;">No words yet</div>
-        <p class="text-muted text-sm">Use the "Add Word" tab to start building your deck.</p>
-      </div>`;
-    return;
-  }
-  const t = today();
-  const dueCount = S.vocab.filter(w => w.next_review && w.next_review <= t).length;
-  el.innerHTML = `
-    <div class="vocab-search-row mb-16">
-      <input type="text" id="vocab-search" placeholder="🔍  Search German or English…" oninput="filterVocab(this.value)">
-    </div>
-    <div class="flex between items-center mb-10">
-      <span class="text-xs text-muted">${S.vocab.length} word${S.vocab.length !== 1 ? 's' : ''} in deck</span>
-      <span class="text-xs ${dueCount ? 'text-amber' : 'text-muted'}">${dueCount} due today</span>
-    </div>
-    <div class="vocab-list" id="vocab-list">${renderVocabRows(S.vocab, t)}</div>
-  `;
+  renderReviewCard($('review-area'));
 }
 
 // ══════════════════════════════════════════════
-// MODULE: GRAMMAR
+// MODULE: GRAMMAR (preserved)
 // ══════════════════════════════════════════════
 async function renderGrammar(c) {
   c.innerHTML = `
@@ -505,8 +607,8 @@ function showTopicList(el, syl, curLevel) {
     html += `
       <div style="margin-bottom:22px;">
         <div class="flex items-center gap-12 mb-12">
-          <span class="text-xs uppercase" style="color:${lv===curLevel?'var(--amber)':'var(--text-muted)'}">CEFR ${lv}</span>
-          ${lv===curLevel?`<span style="font-size:0.6rem;border:1px solid var(--amber);color:var(--amber);padding:1px 7px;letter-spacing:0.1em;">YOUR LEVEL</span>`:''}
+          <span class="text-xs uppercase" style="color:${lv===curLevel?'var(--violet)':'var(--ink-mute)'}">CEFR ${lv}</span>
+          ${lv===curLevel?`<span style="font-size:0.6rem;border:1px solid var(--violet);color:var(--violet);padding:1px 7px;letter-spacing:0.1em;">YOUR LEVEL</span>`:''}
         </div>
         ${topics.map(t => `
           <div class="topic-item" data-topic="${esc(t.topic)}" data-level="${t.level}">
@@ -520,9 +622,7 @@ function showTopicList(el, syl, curLevel) {
   });
   el.innerHTML = html;
   el.querySelectorAll('.topic-item').forEach(item =>
-    item.addEventListener('click', () =>
-      openTopic(el, item.dataset.topic, item.dataset.level)
-    )
+    item.addEventListener('click', () => openTopic(el, item.dataset.topic, item.dataset.level))
   );
 }
 
@@ -540,7 +640,6 @@ async function openTopic(el, topic, level) {
   $('gram-back').addEventListener('click', () => showTopicList(el, S.syllabus, level));
 
   try {
-    // Fetch AI Explanation AND External Resources simultaneously
     const [data, resources] = await Promise.all([
       api('POST','/explain-grammar',{topic, level}),
       api('GET', `/resources?topic=${encodeURIComponent(topic)}`)
@@ -565,7 +664,6 @@ function showExplanation(el, data, resources) {
       <div id="er${i}"></div>
     </div>`).join('');
 
-  // Generate External Resources HTML
   let resourcesHTML = '';
   if (resources && resources.length > 0) {
     resourcesHTML = `
@@ -601,17 +699,17 @@ function showExplanation(el, data, resources) {
 }
 
 function checkEx(i) {
-  const inp  = $(`ei${i}`);
-  const res  = $(`er${i}`);
+  const inp = $(`ei${i}`);
+  const res = $(`er${i}`);
   const user = inp.value.trim().toLowerCase();
-  const ans  = inp.dataset.ans.toLowerCase();
+  const ans = inp.dataset.ans.toLowerCase();
   res.innerHTML = user === ans
     ? `<div class="result-correct">Correct ✓</div>`
     : `<div class="result-wrong">Incorrect — correct answer: <strong>${esc(inp.dataset.ans)}</strong></div>`;
 }
 
 // ══════════════════════════════════════════════
-// MODULE: READING
+// MODULE: READING (preserved)
 // ══════════════════════════════════════════════
 async function renderReading(c) {
   if (!S.profile) S.profile = await api('GET','/profile').catch(()=>({level:'A2'}));
@@ -632,18 +730,18 @@ async function renderReading(c) {
 }
 
 async function doGenReading() {
-  const inp   = $('topic-inp');
+  const inp = $('topic-inp');
   const topic = inp.value.trim();
   if (!topic) return;
-  const body  = $('read-body');
-  const btn   = $('gen-btn');
+  const body = $('read-body');
+  const btn = $('gen-btn');
   body.innerHTML = spin('Generating article…');
-  btn.disabled   = true;
+  btn.disabled = true;
 
   try {
     const level = S.profile?.level || 'A2';
-    const data  = await api('POST','/generate-reading',{topic, level});
-    S.article   = data;
+    const data = await api('POST','/generate-reading',{topic, level});
+    S.article = data;
     showArticle(body, data);
   } catch(e) {
     body.innerHTML = errBox(e.message);
@@ -654,7 +752,7 @@ async function doGenReading() {
 
 function showArticle(el, data) {
   const artHtml = wrapWords(data.article || '');
-  const qHtml   = (data.questions||[]).map((q,i) => `
+  const qHtml = (data.questions||[]).map((q,i) => `
     <div class="question-item">
       <div class="q-text">${i+1}. ${esc(q.q)}</div>
       <div class="reveal-btn" onclick="toggleA(${i})">Show answer ▾</div>
@@ -684,30 +782,29 @@ function wrapWords(text) {
 
 function toggleA(i) { const a = $(`qa${i}`); a.style.display = a.style.display==='none'?'block':'none'; }
 
-// Word tooltip
 let ttWord = '';
 async function lookupWord(word, event) {
   event.stopPropagation();
   const tt = $('word-tooltip');
-  const x  = Math.min(event.clientX, window.innerWidth  - 270);
-  const y  = Math.min(event.clientY + 12, window.innerHeight - 130);
-  tt.style.left    = x + 'px';
-  tt.style.top     = y + 'px';
+  const x = Math.min(event.clientX, window.innerWidth - 290);
+  const y = Math.min(event.clientY + 12, window.innerHeight - 150);
+  tt.style.left = x + 'px';
+  tt.style.top = y + 'px';
   tt.style.display = 'block';
-  $('tt-word').textContent  = word;
-  $('tt-pos').textContent   = '';
+  $('tt-word').textContent = word;
+  $('tt-pos').textContent = '';
   $('tt-trans').textContent = '';
   $('tt-add-btn').textContent = 'Looking up…';
-  $('tt-add-btn').disabled  = true;
+  $('tt-add-btn').disabled = true;
   ttWord = word;
 
   try {
     const d = await api('POST','/translate-word',{word, level:S.profile?.level||'A2'});
-    $('tt-word').textContent  = d.word  || word;
-    $('tt-pos').textContent   = d.part_of_speech || '';
+    $('tt-word').textContent = d.word || word;
+    $('tt-pos').textContent = d.part_of_speech || '';
     $('tt-trans').textContent = d.translation || '';
     $('tt-add-btn').textContent = '+ Add to Deck';
-    $('tt-add-btn').disabled  = false;
+    $('tt-add-btn').disabled = false;
   } catch(e) {
     $('tt-trans').textContent = e.message;
     $('tt-add-btn').style.display = 'none';
@@ -731,24 +828,24 @@ $('tt-add-btn').addEventListener('click', async () => {
 });
 
 // ══════════════════════════════════════════════
-// MODULE: ROLEPLAY
+// MODULE: ROLEPLAY (preserved)
 // ══════════════════════════════════════════════
 const SCENARIOS = [
-  { level:'A1', icon:'🥖', title:'Buying Bread',         desc:'At a German bakery, ordering Brötchen and Brot.',          sys:'You are a friendly German bakery employee. The customer wants to buy bread and rolls.' },
-  { level:'A1', icon:'☕', title:'Ordering Coffee',      desc:'At a café, ordering coffee and a snack.',                  sys:'You are a German café waiter. The customer is ordering coffee and food.' },
-  { level:'A2', icon:'🚂', title:'Buying Train Tickets', desc:'At Munich Hauptbahnhof, purchasing a ticket.',             sys:'You are a German train station employee at Munich Hauptbahnhof. The user wants to buy a train ticket.' },
-  { level:'A2', icon:'🏥', title:'At the Doctor',        desc:'Explaining symptoms to a German doctor.',                  sys:'You are a German general practitioner (Arzt). The patient is describing their symptoms.' },
-  { level:'B1', icon:'🏠', title:'Arguing with Landlord',desc:'Discussing a repair issue with your Vermieter.',          sys:'You are a German landlord (Vermieter). The tenant has a complaint about something broken in the apartment.' },
-  { level:'B1', icon:'💼', title:'Job Interview',        desc:'Interviewing for a position at a German company.',        sys:'You are a German HR manager conducting a job interview at a mid-sized German company.' },
+  { level:'A1', icon:'🥖', title:'Buying Bread', desc:'At a German bakery, ordering Brötchen and Brot.', sys:'You are a friendly German bakery employee.' },
+  { level:'A1', icon:'☕', title:'Ordering Coffee', desc:'At a café, ordering coffee and a snack.', sys:'You are a German café waiter.' },
+  { level:'A2', icon:'🚂', title:'Buying Train Tickets', desc:'At Munich Hauptbahnhof, purchasing a ticket.', sys:'You are a German train station employee.' },
+  { level:'A2', icon:'🏥', title:'At the Doctor', desc:'Explaining symptoms to a German doctor.', sys:'You are a German general practitioner.' },
+  { level:'B1', icon:'🏠', title:'Arguing with Landlord', desc:'Discussing a repair issue with your Vermieter.', sys:'You are a German landlord.' },
+  { level:'B1', icon:'💼', title:'Job Interview', desc:'Interviewing for a position at a German company.', sys:'You are a German HR manager.' },
 ];
 
 const OPENINGS = {
-  'Buying Bread':          'Guten Morgen! Was darf es sein?',
-  'Ordering Coffee':       'Willkommen! Was möchten Sie trinken?',
-  'Buying Train Tickets':  'Guten Tag! Wohin möchten Sie fahren?',
-  'At the Doctor':         'Guten Tag, bitte setzen Sie sich. Was fehlt Ihnen?',
+  'Buying Bread': 'Guten Morgen! Was darf es sein?',
+  'Ordering Coffee': 'Willkommen! Was möchten Sie trinken?',
+  'Buying Train Tickets': 'Guten Tag! Wohin möchten Sie fahren?',
+  'At the Doctor': 'Guten Tag, bitte setzen Sie sich. Was fehlt Ihnen?',
   'Arguing with Landlord': 'Hallo. Was gibt es?',
-  'Job Interview':         'Guten Morgen, nehmen Sie bitte Platz. Erzählen Sie mir etwas über sich.',
+  'Job Interview': 'Guten Morgen, nehmen Sie bitte Platz. Erzählen Sie mir etwas über sich.',
 };
 
 function renderRoleplay(c) {
@@ -776,7 +873,7 @@ function renderRoleplay(c) {
 
 function openScenario(el, sc) {
   S.scenario = sc;
-  S.history  = [];
+  S.history = [];
   const opening = OPENINGS[sc.title] || 'Guten Tag!';
   S.history.push({ role:'assistant', content: opening });
 
@@ -804,7 +901,7 @@ function openScenario(el, sc) {
 }
 
 async function sendMsg() {
-  const inp  = $('chat-inp');
+  const inp = $('chat-inp');
   const text = inp.value.trim();
   if (!text) return;
   inp.value = '';
@@ -826,13 +923,13 @@ async function sendMsg() {
   try {
     const d = await api('POST','/chat-scenario',{
       scenario: S.scenario.title,
-      level:    S.scenario.level,
-      history:  S.history,
+      level: S.scenario.level,
+      history: S.history,
     });
     tyEl.remove();
     S.history.push({ role:'assistant', content: d.reply });
     const aEl = document.createElement('div');
-    aEl.className   = 'msg assistant';
+    aEl.className = 'msg assistant';
     aEl.textContent = d.reply;
     msgs.appendChild(aEl);
     msgs.scrollTop = msgs.scrollHeight;
@@ -879,7 +976,7 @@ async function endConvo() {
 }
 
 // ══════════════════════════════════════════════
-// MODULE: SETTINGS
+// MODULE: SETTINGS (preserved)
 // ══════════════════════════════════════════════
 async function renderSettings(c) {
   c.innerHTML = `
@@ -891,7 +988,7 @@ async function renderSettings(c) {
   try {
     profile = await api('GET','/profile');
     S.profile = profile;
-  } catch(e) { /* show form anyway */ }
+  } catch(e) {}
 
   const isDark = document.documentElement.dataset.theme === 'dark';
 
@@ -947,7 +1044,7 @@ async function renderSettings(c) {
 
 async function testKey() {
   const key = $('s-key').value.trim();
-  const st  = $('key-status');
+  const st = $('key-status');
   if (!key) { st.innerHTML = errBox('Enter an API key first.'); return; }
   st.innerHTML = spin('Testing…');
   S.apiKey = key;
@@ -967,8 +1064,8 @@ async function saveSettings() {
   st.innerHTML = spin('Saving…');
   try {
     const p = await api('POST','/profile/update',{
-      name:               $('s-name').value || undefined,
-      level:              $('s-level').value || undefined,
+      name: $('s-name').value || undefined,
+      level: $('s-level').value || undefined,
       daily_time_minutes: parseInt($('s-time').value) || undefined,
     });
     S.profile = p;
@@ -979,7 +1076,9 @@ async function saveSettings() {
   }
 }
 
-
+// ══════════════════════════════════════════════
+// MODULE: ONBOARDING
+// ══════════════════════════════════════════════
 async function renderOnboarding(c) {
   await startOnboarding();
 }
@@ -988,13 +1087,13 @@ async function renderOnboarding(c) {
 // MODULES MAP & INIT
 // ══════════════════════════════════════════════
 const MODULES = {
-  dashboard:  renderDashboard,
+  dashboard: renderDashboard,
   onboarding: renderOnboarding,
   vocabulary: renderVocabulary,
-  grammar:    renderGrammar,
-  reading:    renderReading,
-  roleplay:   renderRoleplay,
-  settings:   renderSettings,
+  grammar: renderGrammar,
+  reading: renderReading,
+  roleplay: renderRoleplay,
+  settings: renderSettings,
 };
 
 async function bootApp() {
@@ -1012,5 +1111,4 @@ async function bootApp() {
   }
 }
 
-// Boot the app instead of forcing the dashboard
 bootApp();

@@ -1,11 +1,10 @@
 {
   "name": "Nili",
-  "level": "A2",
+  "level": "A1",
+  "level_analysis": "Nili demonstrated mastery of A1 and several A2-level receptive and short-answer tasks but failed the A2 productive writing requirement, indicating a solid A1 foundation without full A2 competency.",
   "daily_time_minutes": 30,
-  "streak": 0,
-  "start_date": "2026-05-06",
   "priorities": [
-    "speaking"
+    "work"
   ],
   "onboarded": true,
   "current_step": 1

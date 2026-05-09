@@ -1,0 +1,18 @@
+# --- Frontend (Node/Vite/TS) ---
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+frontend/.env*
+
+# --- Backend (Python) ---
+backend/venv/
+backend/.venv/
+backend/env/
+backend/__pycache__/
+backend/*.py[cod]
+
+# --- General/IDE ---
+.vscode/
+.idea/
+.DS_Store
+*.log

@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "word": "Shicken",
+    "level": "A2",
+    "next_review": "2026-05-10",
+    "interval_days": 2,
+    "ease_factor": 2.6,
+    "sentences": [
+      "Ich schicke meiner Mutter eine E-Mail.",
+      "Kannst du mir bitte das Foto schicken?",
+      "Wir schicken das Paket heute zur Post."
+    ],
+    "translation": "to send",
+    "part_of_speech": "verb",
+    "added_date": "2026-05-08",
+    "last_reviewed": "2026-05-08"
+  }
+]

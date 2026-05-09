@@ -43,10 +43,14 @@ def grade_and_finalize_onboarding(data: FinalGradingSubmission):
     prompt = (
         f"Analyze the following complete German language placement test history for a student named '{data.name}'.\n\n"
         f"Priorities: {', '.join(data.priorities)}\n\n"
+        "PLACEMENT TEST HISTORY (JSON):\n"
+        f"{history_str}\n\n"
         "Based on their answers (including essay text, transcripts of their speech, and multiple-choice selections), "
         "determine their precise CEFR level (A1, A2, B1, B2, or C1).\n\n"
         "Be rigorous, particularly regarding writing and speaking competence. "
         "Forgive minor Speech-to-Text transcription errors.\n\n"
+        "If the user indicates they cannot answer anymore (e.g. user_answer is null or a special marker), "
+        "treat that as evidence the subsequent questions are above their level.\n\n"
         "Return ONLY minified JSON, no markdown formatting:\n"
         '{"deduced_level":"...", "level_analysis":"...one sentence summary of the reasoning..."}'
     )
