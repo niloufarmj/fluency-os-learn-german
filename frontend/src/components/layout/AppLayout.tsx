@@ -36,6 +36,9 @@ export function AppLayout() {
           <NavLink className={navClass} to="/dashboard">
             <span className="nav-icon">📊</span> Dashboard
           </NavLink>
+          <NavLink className={navClass} to="/plan">
+            <span className="nav-icon">🧠</span> Daily Plan
+          </NavLink>
           <NavLink className={navClass} to="/vocabulary">
             <span className="nav-icon">🗂️</span> Vocabulary
           </NavLink>

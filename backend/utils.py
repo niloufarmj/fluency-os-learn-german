@@ -1,7 +1,7 @@
 import json
 import os
 import re
-from typing import Optional
+from typing import Any, Optional, Tuple
 from fastapi import HTTPException
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
@@ -17,6 +17,7 @@ def read_json(filename: str):
     if not os.path.exists(p):
         if filename == "cache.json": return {}
         if filename in ("vocab.json", "daily_logs.json", "resources.json"): return []
+        if filename in ("daily_plans.json", "daily_progress.json"): return {}
         return {}
     with open(p, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -30,6 +31,16 @@ def strip_fences(text: str) -> str:
     if match:
         return match.group(1)
     return text.strip()
+
+
+def parse_json_strict(text: str) -> Tuple[Any, str]:
+    """
+    Parse JSON from an LLM response. Returns (obj, '') on success, (None, error_message) on failure.
+    """
+    try:
+        return json.loads(strip_fences(text)), ""
+    except Exception as e:
+        return None, str(e)
 
 def call_gemini(api_key: str, messages: list, system: str = None, max_tokens: int = 1024) -> str:
     try:

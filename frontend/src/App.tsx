@@ -7,6 +7,7 @@ import { GrammarPage } from './pages/GrammarPage';
 import { ReadingPage } from './pages/ReadingPage';
 import { RoleplayPage } from './pages/RoleplayPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { PlanPage } from './pages/PlanPage';
 import { AppProvider, useApp } from './state/AppState';
 
 function AppRoutes() {
@@ -29,6 +30,7 @@ function AppRoutes() {
       <Route path="/" element={<Navigate to={shouldOnboard ? '/onboarding' : '/dashboard'} replace />} />
       <Route element={<AppLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/plan" element={<PlanPage />} />
         <Route path="/vocabulary" element={<VocabularyPage />} />
         <Route path="/grammar" element={<GrammarPage />} />
         <Route path="/reading" element={<ReadingPage />} />

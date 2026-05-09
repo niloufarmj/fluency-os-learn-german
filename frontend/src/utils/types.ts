@@ -24,6 +24,50 @@ export type DailyPlan = {
   tasks: DailyPlanTask[];
 };
 
+export type DailyPlanDetailed = {
+  date: string;
+  level: string;
+  focus: string;
+  vocab: Array<{ word: string; translation: string; part_of_speech: string; examples: string[] }>;
+  grammar: {
+    topic: string;
+    explanation: string;
+    examples: string[];
+    exercises: Array<{ sentence: string; answer: string; hint?: string }>;
+  };
+  reading: {
+    title: string;
+    theme: string;
+    article: string;
+    questions: Array<{ q: string; a: string }>;
+  };
+  roleplay: { scenario_title: string; opening: string; target_phrases: string[] };
+  youtube: Array<{ title: string; channel: string; url: string; why_relevant: string }>;
+  end_of_day_test_blueprint: { topics: string[]; instructions: string };
+};
+
+export type DailyProgress = {
+  tasks: { vocab: boolean; grammar: boolean; reading: boolean; roleplay: boolean };
+  minutes_tracked: number;
+  test: { generated: boolean; completed: boolean; score: number | null; attempts: number };
+  completed: boolean;
+};
+
+export type PlanTodayResponse = {
+  effective_date: string;
+  backlog: boolean;
+  plan: DailyPlanDetailed;
+  progress: DailyProgress;
+};
+
+export type EndOfDayTest = {
+  questions: Array<
+    | { type: 'mc'; prompt: string; options: string[]; answer_index: number; explanation: string }
+    | { type: 'short'; prompt: string; answer: string; explanation: string }
+  >;
+  pass_score: number;
+};
+
 export type VocabItem = {
   word: string;
   level?: string;

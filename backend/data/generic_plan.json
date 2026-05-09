@@ -1,0 +1,32 @@
+{
+  "from_level": "A1",
+  "to_level": "A2",
+  "daily_minutes": 60,
+  "estimated_days": 120,
+  "vocab_words_per_day": 12,
+  "grammar_sequence": [
+    "Reflexive Verben",
+    "Präteritum von Modalverben",
+    "Nebensätze mit weil und dass",
+    "Adjektivdeklination",
+    "Wechselpräpositionen",
+    "Verben mit Präpositionen",
+    "Komparativ und Superlativ",
+    "Passiv im Präsens"
+  ],
+  "reading_themes": [
+    "Büroalltag und Aufgaben",
+    "Stellenanzeigen verstehen",
+    "E-Mails von Kollegen",
+    "Berufsbiografien",
+    "Unternehmensstrukturen"
+  ],
+  "roleplay_themes": [
+    "Vorstellungsgespräch",
+    "Terminvereinbarung am Telefon",
+    "Smalltalk in der Kaffeeküche",
+    "Probleme im Meeting ansprechen",
+    "Kundenberatung Basis"
+  ],
+  "notes": "Focus on formal 'Sie' vs informal 'du' in workplace contexts and master the adjective endings early to build confidence."
+}

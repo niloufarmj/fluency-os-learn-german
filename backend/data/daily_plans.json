@@ -1,0 +1,229 @@
+{
+  "2026-05-09": {
+    "date": "2026-05-09",
+    "level": "A2",
+    "focus": "Workplace communication and reflexive verbs",
+    "vocab": [
+      {
+        "word": "der Arbeitstag",
+        "translation": "the workday",
+        "part_of_speech": "noun",
+        "examples": [
+          "Mein Arbeitstag beginnt um 8 Uhr.",
+          "Heute war ein langer Arbeitstag.",
+          "Wie war dein Arbeitstag?"
+        ]
+      },
+      {
+        "word": "der Kollege",
+        "translation": "the colleague",
+        "part_of_speech": "noun",
+        "examples": [
+          "Mein Kollege ist sehr nett.",
+          "Ich arbeite mit vielen Kollegen zusammen.",
+          "Herr Müller ist mein neuer Kollege."
+        ]
+      },
+      {
+        "word": "der Termin",
+        "translation": "the appointment/deadline",
+        "part_of_speech": "noun",
+        "examples": [
+          "Ich habe um 10 Uhr einen Termin.",
+          "Der Termin wurde verschoben.",
+          "Hast du heute viele Termine?"
+        ]
+      },
+      {
+        "word": "die Besprechung",
+        "translation": "the meeting",
+        "part_of_speech": "noun",
+        "examples": [
+          "Die Besprechung dauert eine Stunde.",
+          "Wir haben eine wichtige Besprechung.",
+          "In der Besprechung reden wir über das Projekt."
+        ]
+      },
+      {
+        "word": "das Büro",
+        "translation": "the office",
+        "part_of_speech": "noun",
+        "examples": [
+          "Ich gehe jeden Tag ins Büro.",
+          "Mein Büro ist im zweiten Stock.",
+          "Das Büro ist sehr modern."
+        ]
+      },
+      {
+        "word": "die Aufgabe",
+        "translation": "the task/assignment",
+        "part_of_speech": "noun",
+        "examples": [
+          "Das ist eine schwierige Aufgabe.",
+          "Ich habe meine Aufgaben erledigt.",
+          "Welche Aufgaben hast du heute?"
+        ]
+      },
+      {
+        "word": "der Chef",
+        "translation": "the boss",
+        "part_of_speech": "noun",
+        "examples": [
+          "Mein Chef ist heute nicht da.",
+          "Ich muss mit meinem Chef sprechen.",
+          "Der Chef ist zufrieden mit meiner Arbeit."
+        ]
+      },
+      {
+        "word": "pünktlich",
+        "translation": "punctual",
+        "part_of_speech": "adjective",
+        "examples": [
+          "Bitte sei pünktlich.",
+          "Er ist immer pünktlich im Büro.",
+          "Pünktlichkeit ist wichtig bei der Arbeit."
+        ]
+      },
+      {
+        "word": "erledigen",
+        "translation": "to complete/finish",
+        "part_of_speech": "verb",
+        "examples": [
+          "Ich muss die E-Mails erledigen.",
+          "Hast du die Aufgabe schon erledigt?",
+          "Wir erledigen das morgen."
+        ]
+      },
+      {
+        "word": "antworten",
+        "translation": "to answer",
+        "part_of_speech": "verb",
+        "examples": [
+          "Ich antworte auf die E-Mail.",
+          "Bitte antworten Sie schnell.",
+          "Er hat mir noch nicht geantwortet."
+        ]
+      },
+      {
+        "word": "das Telefonat",
+        "translation": "the phone call",
+        "part_of_speech": "noun",
+        "examples": [
+          "Ich muss ein Telefonat führen.",
+          "Das Telefonat war sehr kurz.",
+          "Während des Telefonats habe ich Notizen gemacht."
+        ]
+      },
+      {
+        "word": "unterschreiben",
+        "translation": "to sign",
+        "part_of_speech": "verb",
+        "examples": [
+          "Können Sie den Vertrag unterschreiben?",
+          "Ich habe das Dokument unterschrieben.",
+          "Wo muss ich unterschreiben?"
+        ]
+      }
+    ],
+    "grammar": {
+      "topic": "Reflexive Verben",
+      "explanation": "Reflexive verbs use reflexive pronouns (mich, dich, sich, uns, euch, sich) because the action refers back to the subject. In A2, we focus on the Accusative reflexive pronouns used when there is no other direct object.",
+      "examples": [
+        "Ich freue mich auf die Arbeit.",
+        "Er setzt sich auf den Stuhl.",
+        "Wir treffen uns im Büro.",
+        "Beeilt euch bitte!"
+      ],
+      "exercises": [
+        {
+          "sentence": "Ich freue ___ auf das neue Projekt.",
+          "answer": "mich",
+          "hint": "Reflexive pronoun for 'ich'"
+        },
+        {
+          "sentence": "Interessierst du ___ für diesen Job?",
+          "answer": "dich",
+          "hint": "Reflexive pronoun for 'du'"
+        },
+        {
+          "sentence": "Der neue Kollege stellt ___ dem Team vor.",
+          "answer": "sich",
+          "hint": "Reflexive pronoun for 'er'"
+        },
+        {
+          "sentence": "Wir müssen ___ auf die Besprechung konzentrieren.",
+          "answer": "uns",
+          "hint": "Reflexive pronoun for 'wir'"
+        },
+        {
+          "sentence": "Setzt ihr ___ bitte in den Konferenzraum?",
+          "answer": "euch",
+          "hint": "Reflexive pronoun for 'ihr'"
+        }
+      ]
+    },
+    "reading": {
+      "title": "Ein ganz normaler Tag im Büro",
+      "theme": "Büroalltag und Aufgaben",
+      "article": "Max kommt um 8:30 Uhr in seinem Büro in Berlin an. Sein Büro ist hell und modern. Zuerst macht er sich einen Kaffee und begrüßt seine Kollegen. „Guten Morgen, wie geht es euch?“, fragt er freundlich. Dann setzt er sich an seinen Schreibtisch und schaltet seinen Computer ein. Er hat viele E-Mails zu beantworten und einige Dokumente zu prüfen. Um 10:00 Uhr gibt es eine große Besprechung im Konferenzraum. Seine Chefin, Frau Weber, erklärt das neue Projekt für das nächste Quartal. Das Projekt handelt von nachhaltigem Marketing, und Max findet das Thema sehr interessant. Er macht sich viele Notizen und stellt kluge Fragen. Er ist während der gesamten Zeit sehr konzentriert. Nach der Besprechung hat er eine kurze Pause in der Kaffeeküche. Er unterhält sich mit seiner Kollegin Sarah. Sie erzählen sich gegenseitig von ihrem Wochenende. Sarah war im Schwarzwald wandern, während Max sich zu Hause entspannt hat. Um 13:00 Uhr geht Max zum Mittagessen in die Kantine. Meistens isst er einen leichten Salat. Am Nachmittag führt er ein wichtiges Telefonat mit einem Kunden aus München. Der Kunde möchte einen neuen Vertrag unterschreiben, aber es gibt noch Fragen zum Preis. Max muss sehr höflich bleiben und das formale 'Sie' verwenden. Er schickt dem Kunden danach sofort eine Zusammenfassung per E-Mail. Bevor er um 17:00 Uhr nach Hause geht, prüft er seinen Kalender für den nächsten Tag. Er erledigt seine letzte Aufgabe, räumt seinen Schreibtisch auf und verabschiedet sich von seinem Team. „Bis morgen!“, sagt er. Er ist ein bisschen müde, aber zufrieden mit seiner Arbeit.",
+      "questions": [
+        {
+          "q": "Was macht Max als Erstes, wenn er im Büro ankommt?",
+          "a": "Er macht sich einen Kaffee und begrüßt seine Kollegen."
+        },
+        {
+          "q": "Worüber spricht Max mit seiner Kollegin Sarah in der Pause?",
+          "a": "Sie sprechen über ihre Erlebnisse am Wochenende."
+        },
+        {
+          "q": "Warum muss Max am Nachmittag besonders höflich sein?",
+          "a": "Weil er ein Telefonat mit einem Kunden führt und das formale 'Sie' nutzt."
+        }
+      ]
+    },
+    "roleplay": {
+      "scenario_title": "Das Vorstellungsgespräch",
+      "opening": "Guten Tag, Herr/Frau Schmidt, vielen Dank für die Einladung zum heutigen Gespräch.",
+      "target_phrases": [
+        "Ich möchte mich kurz vorstellen.",
+        "Ich habe bereits Erfahrung im Bereich Marketing gesammelt.",
+        "Warum möchten Sie bei unserem Unternehmen arbeiten?",
+        "Was sind Ihre größten Stärken im Berufsalltag?",
+        "Ich arbeite sehr gerne in einem internationalen Team.",
+        "Können Sie mir mehr über die täglichen Aufgaben erzählen?",
+        "Ich bin sehr motiviert und lerne schnell dazu.",
+        "Vielen Dank für die Informationen und das freundliche Gespräch.",
+        "Wann kann ich mit einer Rückmeldung von Ihnen rechnen?",
+        "Ich freue mich sehr auf eine mögliche Zusammenarbeit."
+      ]
+    },
+    "youtube": [
+      {
+        "title": "Reflexive Verben einfach erklärt",
+        "channel": "Learn German With Anja",
+        "url": "https://www.youtube.com/embed/W_m6P_YvFpY",
+        "why_relevant": "Anja explains reflexive verbs with clear context and energy, perfect for A1-A2 transition."
+      },
+      {
+        "title": "Job Interview in German - Phrases & Tips",
+        "channel": "Easy German",
+        "url": "https://www.youtube.com/embed/6iYv_L63t-o",
+        "why_relevant": "Real-life examples of how to handle a professional interview in Germany."
+      },
+      {
+        "title": "Office Vocabulary in German",
+        "channel": "German with Jenny",
+        "url": "https://www.youtube.com/embed/8I9pI-I9N_s",
+        "why_relevant": "Essential vocabulary for the workplace to build a foundation for professional communication."
+      }
+    ],
+    "end_of_day_test_blueprint": {
+      "topics": [
+        "Workplace vocabulary",
+        "Reflexive verbs",
+        "Professional communication"
+      ],
+      "instructions": "Review the vocabulary list and practice using reflexive verbs in sentences related to office tasks."
+    }
+  }
+}

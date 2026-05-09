@@ -4,7 +4,9 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 import json
-from utils import read_json, write_json, call_gemini, strip_fences, require_key
+from utils import read_json, write_json, call_gemini, parse_json_strict, require_key
+from planning.prompts import build_generic_plan_prompt, build_fix_json_prompt
+from planning.schemas import validate_generic_plan
 
 router = APIRouter()
 
@@ -60,7 +62,19 @@ def grade_and_finalize_onboarding(data: FinalGradingSubmission):
     
     try:
         raw_llm_response = call_gemini(data.apiKey, [{"role": "user", "content": prompt}], system=system_prompt, max_tokens=2048)
-        llm_data = json.loads(strip_fences(raw_llm_response))
+        llm_data, llm_err = parse_json_strict(raw_llm_response)
+        if llm_err or not isinstance(llm_data, dict):
+            schema_hint = '{"deduced_level":"A2","level_analysis":"one sentence"}'
+            fix_prompt = build_fix_json_prompt(bad_json=raw_llm_response, schema_hint=schema_hint)
+            fixed = call_gemini(
+                data.apiKey,
+                [{"role": "user", "content": fix_prompt}],
+                system="You output valid minified JSON only.",
+                max_tokens=2048,
+            )
+            llm_data, llm_err = parse_json_strict(fixed)
+        if llm_err or not isinstance(llm_data, dict):
+            raise ValueError("Placement grading JSON invalid: " + (llm_err or "not an object"))
     except Exception as e:
         return {"error": f"LLM grading failed: {str(e)}"}
     
@@ -78,6 +92,40 @@ def grade_and_finalize_onboarding(data: FinalGradingSubmission):
         "current_step": 1 
     })
     write_json("user_profile.json", profile)
+
+    # Create & persist a generic progression plan (current level -> next level)
+    try:
+        gp_prompt = build_generic_plan_prompt(profile=profile, placement_summary=llm_data)
+        gp_raw = call_gemini(
+            data.apiKey,
+            [{"role": "user", "content": gp_prompt}],
+            system="You design robust language learning curricula and you strictly output valid JSON.",
+            max_tokens=2048,
+        )
+        gp_obj, gp_err = parse_json_strict(gp_raw)
+        if gp_err:
+            schema_hint = (
+                '{"from_level":"A2","to_level":"B1","daily_minutes":30,"estimated_days":90,'
+                '"vocab_words_per_day":12,"grammar_sequence":["..."],'
+                '"reading_themes":["..."],"roleplay_themes":["..."],"notes":"..."}'
+            )
+            fix_prompt = build_fix_json_prompt(bad_json=gp_raw, schema_hint=schema_hint)
+            gp_fixed = call_gemini(
+                data.apiKey,
+                [{"role": "user", "content": fix_prompt}],
+                system="You output valid minified JSON only.",
+                max_tokens=2048,
+            )
+            gp_obj, gp_err = parse_json_strict(gp_fixed)
+        plan, plan_errs = validate_generic_plan(gp_obj)
+        if plan_errs:
+            raise ValueError("GenericPlan validation failed: " + "; ".join(plan_errs))
+        write_json("generic_plan.json", plan.to_dict())
+    except Exception as e:
+        # Non-fatal: the app can still run, and /plan/today can regenerate later.
+        logs = read_json("daily_logs.json")
+        logs.append({"date": datetime.now().isoformat(), "type": "generic_plan_error", "error": str(e)})
+        write_json("daily_logs.json", logs)
     
     # Store the full test history as a log entry for future reference
     logs = read_json("daily_logs.json")

@@ -11,7 +11,8 @@ from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from routers import onboarding
-from utils import read_json, write_json, call_gemini, strip_fences, require_key
+from routers import plan
+from utils import read_json, write_json, call_gemini, parse_json_strict, require_key
 
 app = FastAPI(title="FluencyOS Backend")
 
@@ -26,6 +27,7 @@ app.add_middleware(
 
 # Mount the Onboarding router
 app.include_router(onboarding.router)
+app.include_router(plan.router)
 
 # ── Request Models ────────────────────────────────────────────────────────────
 
@@ -122,7 +124,9 @@ def generate_vocab_context(req: VocabContextRequest, authorization: Optional[str
         '{"sentences":["...","...","..."],"translation":"...","part_of_speech":"..."}'
     )
     raw = call_gemini(api_key, [{"role": "user", "content": prompt}])
-    result = json.loads(strip_fences(raw))
+    result, err = parse_json_strict(raw)
+    if err or not isinstance(result, dict):
+        raise HTTPException(status_code=400, detail="Gemini returned invalid JSON.")
 
     cache[cache_key] = result
     write_json("cache.json", cache)
@@ -172,7 +176,9 @@ def end_chat_review(req: EndChatReviewRequest, authorization: Optional[str] = He
         '"score":7,"summary":"one sentence summary"}'
     )
     raw = call_gemini(api_key, [{"role": "user", "content": prompt}], max_tokens=2048)
-    result = json.loads(strip_fences(raw))
+    result, err = parse_json_strict(raw)
+    if err or not isinstance(result, dict):
+        raise HTTPException(status_code=400, detail="Gemini returned invalid JSON.")
 
     logs = read_json("daily_logs.json")
     logs.append({
@@ -201,7 +207,9 @@ def generate_reading(req: GenerateReadingRequest, authorization: Optional[str] =
         '{"article":"...","questions":[{"q":"...","a":"..."}]}'
     )
     raw = call_gemini(api_key, [{"role": "user", "content": prompt}], max_tokens=2048)
-    result = json.loads(strip_fences(raw))
+    result, err = parse_json_strict(raw)
+    if err or not isinstance(result, dict):
+        raise HTTPException(status_code=400, detail="Gemini returned invalid JSON.")
 
     cache[cache_key] = result
     write_json("cache.json", cache)
@@ -334,7 +342,9 @@ def explain_grammar(req: ExplainGrammarRequest, authorization: Optional[str] = H
         '"exercises":[{"sentence":"Ich ___ nach Hause.","answer":"gehe","hint":"to go"}]}'
     )
     raw = call_gemini(api_key, [{"role": "user", "content": prompt}], max_tokens=2048)
-    result = json.loads(strip_fences(raw))
+    result, err = parse_json_strict(raw)
+    if err or not isinstance(result, dict):
+        raise HTTPException(status_code=400, detail="Gemini returned invalid JSON.")
 
     cache[cache_key] = result
     write_json("cache.json", cache)
@@ -355,7 +365,9 @@ def translate_word(req: TranslateWordRequest, authorization: Optional[str] = Hea
         '{"word":"...","translation":"...","part_of_speech":"..."}'
     )
     raw = call_gemini(api_key, [{"role": "user", "content": prompt}])
-    result = json.loads(strip_fences(raw))
+    result, err = parse_json_strict(raw)
+    if err or not isinstance(result, dict):
+        raise HTTPException(status_code=400, detail="Gemini returned invalid JSON.")
 
     cache[cache_key] = result
     write_json("cache.json", cache)

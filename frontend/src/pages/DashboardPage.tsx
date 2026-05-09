@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { apiGet } from '../utils/api';
-import type { DailyPlan, LogEntry, VocabItem } from '../utils/types';
+import type { LogEntry, VocabItem } from '../utils/types';
 import { useApp } from '../state/AppState';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -54,7 +54,6 @@ export function DashboardPage() {
   const { profile, refreshProfile } = useApp();
   const nav = useNavigate();
 
-  const [plan, setPlan] = useState<DailyPlan | null>(null);
   const [vocab, setVocab] = useState<VocabItem[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -68,13 +67,8 @@ export function DashboardPage() {
     (async () => {
       setError(null);
       try {
-        const [p, v, l] = await Promise.all([
-          apiGet<DailyPlan>('/daily-plan'),
-          apiGet<VocabItem[]>('/vocab'),
-          apiGet<LogEntry[]>('/logs'),
-        ]);
+        const [v, l] = await Promise.all([apiGet<VocabItem[]>('/vocab'), apiGet<LogEntry[]>('/logs')]);
         if (!mounted) return;
-        setPlan(p);
         setVocab(v);
         setLogs(l);
         await refreshProfile();
@@ -111,7 +105,7 @@ export function DashboardPage() {
         </div>
         <div className="hero-sub">Ready for today&apos;s lesson? Your daily plan is queued and ready to go.</div>
         <div className="hero-actions">
-          <button className="btn btn-primary" onClick={() => nav('/vocabulary')}>
+          <button className="btn btn-primary" onClick={() => nav('/plan')}>
             <span>▶</span> Continue today&apos;s plan
           </button>
           <Link className="btn" to="/reading">
@@ -157,54 +151,19 @@ export function DashboardPage() {
                   <div className="plan-time">{profile?.daily_time_minutes || 30} min</div>
                 </div>
                 <div id="plan-area">
-                  {!plan ? (
-                    <div className="spinner-wrap">
-                      <div className="spinner" /> Generating plan…
+                  <div className="task-list">
+                    <div className="task-item" onClick={() => nav('/plan')}>
+                      <div className="task-check" />
+                      <div className="task-info">
+                        <div className="task-type">🧠 Daily Plan</div>
+                        <div className="task-detail">Open your ready-to-study lesson for today</div>
+                      </div>
+                      <div className="task-meta">
+                        <div className="task-pct">→</div>
+                        <div className="text-xs text-muted">{profile?.daily_time_minutes || 30} min</div>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="task-list">
-                      {plan.tasks.map((t, i) => {
-                        const map: Record<string, string> = {
-                          vocab_review: '/vocabulary',
-                          grammar: '/grammar',
-                          reading: '/reading',
-                          roleplay: '/roleplay',
-                          end_of_day_test: '/grammar',
-                        };
-                        const labels: Record<string, string> = {
-                          vocab_review: '🗂️ Vocab review',
-                          grammar: '🧩 Grammar',
-                          reading: '📖 Reading',
-                          roleplay: '🎭 Roleplay',
-                          end_of_day_test: '📝 End of Day Test',
-                        };
-                        const detail =
-                          t.type === 'vocab_review'
-                            ? `Review ${t.count} flashcards`
-                            : t.type === 'grammar'
-                              ? t.topic
-                              : t.type === 'reading'
-                                ? `${t.level} level article`
-                                : t.type === 'end_of_day_test'
-                                  ? t.topic || 'Daily assessment'
-                                  : t.type;
-
-                        return (
-                          <div key={i} className="task-item" onClick={() => nav(map[t.type] || '/dashboard')}>
-                            <div className="task-check" />
-                            <div className="task-info">
-                              <div className="task-type">{labels[t.type] || t.type}</div>
-                              <div className="task-detail">{detail}</div>
-                            </div>
-                            <div className="task-meta">
-                              <div className="task-pct">—</div>
-                              <div className="text-xs text-muted">{t.duration_min} min</div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                  </div>
                 </div>
                 <div className="text-xs text-muted mt-12 italic" style={{ textAlign: 'center' }}>
                   🔒 Complete all tasks to unlock tomorrow&apos;s content
